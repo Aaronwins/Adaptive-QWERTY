@@ -1,112 +1,177 @@
-Adaptive QWERTY
+# Adaptive QWERTY
 
-Adaptive QWERTY is an HCI research prototype that explores whether a personalized QWERTY keyboard can improve one-handed mobile typing by adapting the keyboard layout to the user's hand and thumb reach.
+Adaptive QWERTY is an HCI research prototype that explores whether a personalized QWERTY keyboard can improve one-handed mobile typing by adapting the keyboard's size and position based on thumb measurements and individual reach comfort.
 
-Live Demo
+## Live Demo
 
 https://adaptiveqwerty.vercel.app/
 
-Project Goal
+## Project Goal
 
-Standard smartphone QWERTY keyboards use the same layout for every user, even though hand size, thumb reach, and handedness differ. This project investigates whether adapting a familiar QWERTY layout to the individual user can make one-handed typing more comfortable and efficient.
+Standard smartphone QWERTY keyboards generally use the same key arrangement regardless of differences in hand size, thumb reach, and handedness. While shrinking a keyboard may make distant keys easier to reach, it can also make individual keys harder to press accurately.
 
-Current Prototype
+This project investigates the tradeoff between thumb reach and key size when personalizing a familiar QWERTY layout for one-handed typing.
 
-The current version includes:
+## Research Question
 
-A custom on-screen QWERTY keyboard
+Can personalized QWERTY layouts that incorporate thumb length, thumb width, and individual reach calibration improve one-handed typing comfort and accuracy compared with a standard QWERTY layout?
 
-A target phrase for transcription
+## Current Prototype
 
-A live text display showing what the user types
+The current prototype includes:
 
-Space and backspace controls
+- A custom on-screen QWERTY keyboard with space and backspace controls
+- Left-hand and right-hand selection
+- Thumb length measurement in centimeters
+- Thumb-pad width measurement in millimeters
+- Six-point thumb-reach calibration using comfortable/difficult responses
+- Adaptive keyboard sizing and horizontal positioning
+- Standard and Adaptive QWERTY modes
+- Transcription sessions with 3, 5, or 10 phrases
+- Live typing time and words-per-minute (WPM) calculations
+- Final error-rate measurement using Levenshtein distance
+- Backspace tracking
+- Session results with average typing statistics
+- Browser-based storage of completed typing sessions
+- A typing history with individual session deletion
+- CSV export of saved typing results
+- A mobile-focused interface for testing on smartphones
 
-A mobile-focused interface that can be tested in a browser on a smartphone
+## How the Adaptation Works
 
-Planned Features
+The prototype uses a rule-based scoring algorithm rather than a trained machine-learning model.
 
-The next versions of the prototype will add:
+**1. Hand measurements**
 
-Left-hand and right-hand selection
+The user selects their typing hand and enters their thumb length and thumb-pad width.
 
-Thumb-reach calibration
+Thumb length influences how reach-comfort responses are interpolated across the keyboard. Thumb width helps limit excessive keyboard shrinking.
 
-Adaptive keyboard positioning and sizing
+**2. Reach calibration**
 
-Standard vs. adaptive keyboard modes
+The user evaluates six positions across a calibration area and marks each as comfortable or difficult to reach without changing their grip.
 
-Typing completion time
+These responses are used to estimate comfortable reach at different keyboard positions.
 
-Words per minute (WPM)
+**3. Keyboard layout scoring**
 
-Error-rate measurement
+The algorithm evaluates candidate keyboard widths and horizontal positions.
 
-Backspace/correction tracking
+It considers three factors:
 
-Comfort and preference ratings
+- Estimated comfort when reaching the centers of the keys
+- Keyboard width, with a preference for preserving larger keys
+- Horizontal alignment with the selected typing hand
 
-Experimental result collection for the HCI evaluation
+The algorithm chooses the candidate with the highest score.
 
-Research Question
+**4. Thumb-width constraint**
 
-Can a QWERTY keyboard personalized to a user's handedness and thumb reach improve one-handed mobile typing compared with a standard QWERTY layout?
+A wider thumb pad increases the minimum allowed keyboard width. This prevents the algorithm from selecting some narrower keyboard layouts that might make keys difficult to press.
 
-Planned Evaluation
+This constraint is a design heuristic. It has not been experimentally validated as an ideal relationship between thumb width and key size.
 
-The prototype is intended to be evaluated using a within-subject study in which participants complete similar typing tasks using both a standard QWERTY layout and the adaptive version.
+The keyboard keeps the standard QWERTY letter arrangement. The adaptation changes its overall width and horizontal position rather than rearranging individual letters.
 
-Potential measurements include:
+## Typing Tests and Data Collection
 
-Typing speed
+Users can complete typing sessions using either the Standard or Adaptive keyboard.
 
-Completion time
+Both modes use the same transcription phrases for a given phrase count, making their results easier to compare.
 
-Error rate
+The application records:
 
-Number of corrections/backspaces
+- Session date and time
+- Keyboard mode and typing hand
+- Thumb length and thumb width
+- Calibration responses
+- Keyboard width and horizontal position
+- Target and typed phrases
+- Completion time
+- Words per minute
+- Final error percentage
+- Number of backspaces
 
-Perceived comfort
+Completed trials are saved in the browser using localStorage. Results normally remain available after refreshing the page or closing the tab.
 
-User preference
+Users can export all saved results to a CSV file, delete individual sessions, or clear their typing history with confirmation.
 
-Technology Stack
+Data is not automatically uploaded to a server or synchronized between devices. Browser storage is not a permanent backup, so exporting results is recommended.
 
-HTML
+## Planned Evaluation
 
-CSS
+The project will primarily be evaluated using two HCI methods covered in class.
 
-JavaScript
+**GOMS (Goals, Operators, Methods, and Selection Rules)**
 
-GitHub for version control
+GOMS will be used to analyze the interaction steps involved in configuring the keyboard, completing calibration, and performing typing tasks.
 
-Vercel for deployment
+**Nielsen's 10 Usability Heuristics**
 
-Project Structure
+The prototype will be reviewed against Nielsen's usability principles, including visibility of system status, consistency, user control, error prevention, and recognition rather than recall.
 
+Informal self-testing and a small pilot evaluation may also be included, if feasible, to identify practical problems with keyboard reach, key size, and typing familiarity.
+
+The application already records typing performance, but improvements in speed, accuracy, or comfort have not yet been established experimentally.
+
+## Related Work
+
+Zhang and Deng (2022) investigated one-handed keyboard layouts using thumb-reach tracing and adaptable QWERTY designs.
+
+This project explores a different calibration method using measured thumb length, thumb width, and six subjective reach-comfort responses.
+
+The goal is not to introduce an entirely new keyboard arrangement, but to investigate an alternative way to personalize the size and position of a familiar QWERTY keyboard.
+
+Reference: Zhang and Deng (2022), *A Comparative Study on Single-handed Keyboards on Large-screen Mobile Devices*.
+
+https://graphics.cs.uh.edu/wp-content/papers/2022/2022-AVI-keyboardComparisonStudy.pdf
+
+## Limitations
+
+- The adaptation formula is heuristic and has not been validated against a biomechanical model.
+- Thumb measurements alone do not determine actual reach or typing accuracy.
+- The six calibration positions provide only an approximate comfort estimate.
+- The algorithm does not guarantee that Adaptive QWERTY will outperform Standard QWERTY.
+- The custom keyboard is a browser-based prototype, not a replacement for a phone's system keyboard.
+- Familiarity with standard QWERTY may affect typing performance.
+- Browser storage can be cleared or removed, so CSV export is important for preserving research results.
+
+## Technology Stack
+
+- HTML
+- CSS
+- JavaScript
+- Browser localStorage
+- GitHub for version control
+- Vercel for deployment
+
+## Project Structure
+
+```text
 Adaptive-QWERTY/
 ├── index.html
 ├── style.css
 ├── script.js
 └── README.md
+```
 
-Running Locally
+## Running Locally
 
 Clone the repository:
 
+```bash
 git clone https://github.com/Aaronwins/Adaptive-QWERTY.git
+```
 
-Open the project folder.
+Open the project folder and launch `index.html` in a browser.
 
-Open index.html in a browser.
+No additional dependencies or build process are required.
 
-No installation or build process is currently required.
+## Deployment
 
-Deployment
+The project is deployed using Vercel. Changes pushed to the connected GitHub repository are automatically redeployed to the live website.
 
-The project is deployed through Vercel. Changes pushed to the connected GitHub repository are automatically redeployed to the live site.
-
-Author
+## Author
 
 Aaron Amalraj
 
