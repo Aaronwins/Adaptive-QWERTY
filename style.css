@@ -83,3 +83,47 @@ table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 1
 th, td { padding: 8px 5px; border-bottom: 1px solid #d2e9e2; text-align: right; }
 th:first-child, td:first-child { text-align: left; }
 @media (max-width: 350px) { .app { padding-left: 8px; padding-right: 8px; } .panel { padding: 12px; } .key { height: 43px; } .rating-buttons button { padding: 10px 5px; font-size: 12px; } }
+
+/* Typing history */
+.history-list {
+  display: grid;
+  gap: 8px;
+  margin: 11px 0 14px;
+}
+
+.history-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 10px;
+  background: #fcfaff;
+}
+
+.history-entry > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.history-entry strong {
+  font-size: 12px;
+}
+
+.history-entry span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.delete-session {
+  padding: 8px 11px;
+  flex-shrink: 0;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
