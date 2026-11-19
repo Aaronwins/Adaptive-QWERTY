@@ -281,6 +281,8 @@ function chooseLayout(answers, lengthCm, widthMm, selectedHand) {
   // Wider thumb pads restrict how far the keyboard can shrink.
   // This is an approximate design constraint, not a direct
   // conversion between thumb width and physical key size.
+  // Larger thumb pads limit how narrow the keyboard can become.
+  // The limits are heuristic and have not been experimentally validated.
   const minWidth = clamp(
     0.80 + 0.012 * (widthMm - 16),
     0.78,
@@ -308,7 +310,10 @@ function chooseLayout(answers, lengthCm, widthMm, selectedHand) {
 
       const preferredEdge =
         selectedHand === "right" ? maxLeft : 0;
-
+      // Compare possible keyboard widths and horizontal positions.
+      // Give the most weight to estimated reach comfort.
+      // Reward wider keyboards to help preserve key size.
+      // Slightly favor positioning near the selected hand.
       const score =
         0.82 * coverage +
         0.18 * width -
