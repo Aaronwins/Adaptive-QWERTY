@@ -531,6 +531,7 @@ function startSession() {
   loadPhrase();
 }
 
+
 function loadPhrase() {
   if (!session) return;
 
@@ -542,6 +543,15 @@ function loadPhrase() {
     `${session.index + 1} of ${session.phrases.length}`;
 
   resetPhrase();
+
+  // Scroll to the typing area when a session starts
+  // or when the user moves to the next phrase.
+  requestAnimationFrame(() => {
+    $("targetPhrase").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  });
 }
 
 function finishPhrase() {
