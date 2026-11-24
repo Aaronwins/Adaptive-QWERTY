@@ -29,7 +29,7 @@ The current prototype includes:
 - Six-point thumb-reach calibration using comfortable/difficult responses
 - Adaptive keyboard sizing and horizontal positioning
 - Standard and Adaptive QWERTY modes
-- Transcription sessions with 3, 5, or 10 phrases selected from 200 unique sentences
+- Transcription sessions with 3, 5, or 10 phrases selected from 900 unique sentences
 - Automatic fresh random phrase selection for each session, without a seed input
 - Optional autocorrection: Off, Spelling dictionary, or Hybrid contextual ML
 - SymSpell-style correction backed by a large English word-frequency dictionary
@@ -92,7 +92,7 @@ The keyboard keeps the standard QWERTY letter arrangement. The adaptation change
 
 Users can complete typing sessions using either the Standard or Adaptive keyboard.
 
-The app automatically shuffles a bank of **200 unique sentences** at the beginning of every session, selecting 3, 5, or 10 phrases without repetition within the session. Users do not need to enter a random seed. The app records an automatically generated seed internally for reproducibility and saves the exact target phrases with each trial.
+The app automatically shuffles a bank of **900 unique sentences** at the beginning of every session, selecting 3, 5, or 10 phrases without repetition within the session. Users do not need to enter a random seed. The app records an automatically generated seed internally for reproducibility and saves the exact target phrases with each trial.
 
 The application records:
 
@@ -149,7 +149,7 @@ The project uses three complementary HCI evaluation methods:
 
 An initial single-participant evaluation collected **40 completed phrase trials** across Standard and Adaptive layouts with dominant and non-dominant hands. Standard averaged **16.92 WPM** compared with **14.89 WPM** for Adaptive. Adaptive had fewer backspaces per phrase (**2.20** versus **3.10**); both recorded **0% final error after corrections**. These descriptive results do not establish general superiority or measured comfort benefits.
 
-The additional autocorrection conditions and the 200-phrase randomized bank make new comparisons possible; they are **features for further evaluation, not evidence that ML improves typing**.
+The additional autocorrection conditions and the 900 phrase randomized bank make new comparisons possible; they are **features for further evaluation, not evidence that ML improves typing**.
 
 ## Related Work
 
