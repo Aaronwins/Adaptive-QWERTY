@@ -103,7 +103,7 @@
           h("span", { className: "welcome-kicker" }, "Adaptive QWERTY"),
           h("h1", null, "The keyboard you know,", h("span", null, " adjusted for you.")),
           h("p", { className: "welcome-description" },
-            "Test a familiar QWERTY layout that adapts to your thumb reach. Compare layouts, typing speed, accuracy, and autocorrection in a simple mobile experiment."
+            "Test a familiar QWERTY layout that adapts to your thumb reach, thumb width, and six-point reach calibration. Compare keyboard layouts, typing speed, accuracy, and autocorrection in a mobile typing experiment."
           ),
           h("div", { className: "welcome-cta" },
             h("button", { type: "button", className: "welcome-button-primary", onClick: () => go("lab") }, "Set up keyboard", h("span", { "aria-hidden": "true" }, " →")),
