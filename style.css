@@ -820,3 +820,49 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   color: #8996a2;
   pointer-events: none;
 }
+
+/* Keep the message entry visually attached to the keyboard, rather than
+ * separated by the experimental metrics and trial buttons. */
+.keyboard-stage > .message-composer {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 9px;
+  min-width: 0;
+}
+.keyboard-stage > .message-composer.hidden { display: none !important; }
+.keyboard-stage > .message-composer .typed-box {
+  flex: 1 1 0;
+  min-height: 43px;
+  max-height: 114px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #aebbc8;
+  font-size: 15px;
+}
+.message-composer-plus,
+.message-composer-send {
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+}
+.message-composer-plus {
+  font-size: 23px;
+  color: #576a7d;
+  background: #edf1f4;
+}
+.message-composer-send {
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+  background: #147bce;
+}
+/* These two icons are decorative. The keyboard Return and the visible
+ * Finish phrase button are the actual trial submission controls. */
+.keyboard-dock + .keyboard-help { margin-top: 7px; }
