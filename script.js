@@ -270,11 +270,20 @@ let suggestionNotice = "";
 // ------------------------------
 
 // Create actual letter buttons once; index.html defines only the row containers.
-const SYMBOL_ROWS = ["1234567890","@#$%&-+()/",".\"':;!?"];
-const EXTRA_SYMBOL_ROWS = ["[]{}<>^~|\\","_=+£€¥•","*,?!;:'"];
+// US English iPhone style keyboard pages. Each of the first two rows uses
+// ten keys. The bottom symbol row is five punctuation keys with two modifiers.
+const SYMBOL_ROWS = [
+  ["1","2","3","4","5","6","7","8","9","0"],
+  ["-","/",":",";","(",")","$","&","@","\""],
+  [".",",","?","!","'"]
+];
+const EXTRA_SYMBOL_ROWS = [
+  ["[","]","{","}","#","%","^","*","+","="],
+  ["_","\\","|","~","<",">","€","£","¥","•"],
+  [".",",","?","!","'"]
+];
 const QWERTY_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
 
-// Render a compact iOS-inspired arrangement, with equal-width letter keys.
 function createKeyboard() {
   renderKeyboardPage();
 }
@@ -290,27 +299,41 @@ function addKeyboardKey(row, label, key, className) {
   row.appendChild(button);
 }
 
+// The 123 page and #+= page use the same iPhone-like geometry.
+// Switching pages never changes the standard and adaptive reach algorithm.
 function renderKeyboardPage() {
   const letterMode = keyboardPage === "letters";
-  const rows = letterMode ? QWERTY_ROWS : keyboardPage === "extras" ? EXTRA_SYMBOL_ROWS : SYMBOL_ROWS;
+  const rows = letterMode ? QWERTY_ROWS
+    : keyboardPage === "extras" ? EXTRA_SYMBOL_ROWS : SYMBOL_ROWS;
   document.querySelectorAll(".key-row[data-row]").forEach((row, index) => {
     row.replaceChildren();
+    row.classList.toggle("symbol-row", !letterMode);
+    row.classList.toggle("symbol-bottom-row", !letterMode && index === 2);
+
     if (index === 2) {
-      addKeyboardKey(row, letterMode ? "⇧" : keyboardPage === "numbers" ? "#+=" : "123", letterMode ? "shift" : "more-symbols",
-        "key-modifier shift-key" + (keyboardCase === "upper" && letterMode ? " selected" : ""));
+      const modifierLabel = letterMode ? "⇧"
+        : keyboardPage === "numbers" ? "#+=" : "123";
+      addKeyboardKey(
+        row, modifierLabel, letterMode ? "shift" : "more-symbols",
+        "key-modifier shift-key" +
+          (keyboardCase === "upper" && letterMode ? " selected" : "")
+      );
     }
+
     for (const character of rows[index]) {
       const label = letterMode && keyboardCase === "upper"
         ? character.toUpperCase() : character;
       addKeyboardKey(row, label, character, "letter-key");
     }
+
     if (index === 2) {
       addKeyboardKey(row, "⌫", "backspace", "key-modifier delete-key");
     }
   });
+
   $("numberToggle").textContent = letterMode ? "123" : "ABC";
-  $("numberToggle").setAttribute("aria-label", letterMode
-    ? "Switch to numbers and symbols" : "Switch to letters");
+  $("numberToggle").setAttribute("aria-label",
+    letterMode ? "Switch to numbers and symbols" : "Switch to letters");
 }
 
 function handleKeyboardKey(key) {
