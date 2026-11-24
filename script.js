@@ -263,6 +263,7 @@ let spacePresses = 0;
 
 // Create actual letter buttons once; index.html defines only the row containers.
 const SYMBOL_ROWS = ["1234567890", "@#$%&-+()/", "*\"':;!?"];
+const EXTRA_SYMBOL_ROWS = ["[]{}<>^~|\\", "_=+£€¥•", ".,?!;:'"];
 const QWERTY_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
 
 // Render a compact iOS-inspired arrangement, with equal-width letter keys.
@@ -283,11 +284,11 @@ function addKeyboardKey(row, label, key, className) {
 
 function renderKeyboardPage() {
   const letterMode = keyboardPage === "letters";
-  const rows = letterMode ? QWERTY_ROWS : SYMBOL_ROWS;
+  const rows = letterMode ? QWERTY_ROWS : keyboardPage === "extras" ? EXTRA_SYMBOL_ROWS : SYMBOL_ROWS;
   document.querySelectorAll(".key-row[data-row]").forEach((row, index) => {
     row.replaceChildren();
     if (index === 2) {
-      addKeyboardKey(row, letterMode ? "⇧" : "#+=", letterMode ? "shift" : "more-symbols",
+      addKeyboardKey(row, letterMode ? "⇧" : keyboardPage === "numbers" ? "#+=" : "123", letterMode ? "shift" : "more-symbols",
         "key-modifier shift-key" + (keyboardCase === "upper" && letterMode ? " selected" : ""));
     }
     for (const character of rows[index]) {
@@ -315,7 +316,11 @@ function handleKeyboardKey(key) {
     renderKeyboardPage();
     return;
   }
-  if (key === "more-symbols") return;
+  if (key === "more-symbols") {
+    keyboardPage = keyboardPage === "numbers" ? "extras" : "numbers";
+    renderKeyboardPage();
+    return;
+  }
   if (key === "return") {
     if (session && !phraseRecorded) finishPhrase();
     return;
