@@ -11,7 +11,7 @@ Spelling correction applies on Space and Finish phrase. Contextual corrections u
 
 ## Reproducible phrase testing
 
-The phrase bank has 70 entries. Enter the same Random phrase set number to obtain the same shuffled order for each experimental condition. Compare Standard/Adaptive and Off/Spelling/Hybrid with a consistent seed, phrase count, and hand. Rotate the testing order across different seeds to mitigate practice effects.
+The phrase bank has 200 unique entries. Enter the same Random phrase set number to obtain the same shuffled order for each experimental condition. Compare Standard/Adaptive and Off/Spelling/Hybrid with a consistent seed, phrase count, and hand. Rotate the testing order across different seeds to mitigate practice effects.
 
 ## CSV fields
 
