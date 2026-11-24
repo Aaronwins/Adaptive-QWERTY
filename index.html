@@ -152,14 +152,6 @@
       <p class="field-label phrase-label">Type this phrase</p>
       <p id="targetPhrase" class="target-phrase"></p>
 
-      <!-- A message-style read-only display driven by the experimental keyboard.
-           This is not a second native input method. -->
-      <div class="message-composer" aria-label="Typing message">
-        <div id="typedText" class="typed-box"
-             aria-label="Text typed using the custom keyboard"
-             aria-live="polite"></div>
-      </div>
-
       <div class="actions">
         <button type="button" id="resetPhrase" class="secondary">
           Retry phrase
@@ -210,14 +202,6 @@
     </div>
   </section>
 
-  <!-- Instructions stay visible above the keyboard and do not affect key dimensions. -->
-  <p class="keyboard-help">
-    Tap return to finish a phrase. On a computer, you can also use the
-    physical keyboard for letters, Space, Backspace, Enter and punctuation.
-    Reach estimates are approximate. Trial data stays in your browser
-    unless you export it.
-  </p>
-
   <!-- Letters are inserted into the three empty rows by createKeyboard(). -->
   <section class="keyboard-dock"
            aria-label="Interactive QWERTY keyboard">
@@ -227,6 +211,16 @@
     </div>
 
     <div class="keyboard-stage">
+      <!-- iMessage-inspired message field, right above the custom keys.
+           It is populated exclusively by our keyboard so all trials use
+           the same input and metrics; no native keyboard is opened. -->
+      <div id="messageComposer" class="message-composer hidden" aria-label="Text message typing area">
+        <span class="message-composer-plus" aria-hidden="true">+</span>
+        <div id="typedText" class="typed-box" role="textbox" tabindex="0"
+             aria-readonly="true" aria-label="Text message, use the custom keyboard to type"
+             aria-live="polite"></div>
+        <span class="message-composer-send" aria-hidden="true">↑</span>
+      </div>
       <!-- Suggestions sit directly above the keys, like an iOS predictive-text bar.
            Suggestions are derived from the typed word, never the target prompt. -->
       <div id="suggestionBar" class="suggestion-bar" role="group" aria-label="Autocorrection suggestions">
@@ -253,6 +247,13 @@
       <div class="keyboard-home-indicator"></div>
     </div>
   </section>
+  <!-- Always-visible instructions follow the keyboard, as before. -->
+  <p class="keyboard-help">
+    Tap return to finish a phrase. On a computer, you can also use the
+    physical keyboard for letters, Space, Backspace, Enter and punctuation.
+    Reach estimates are approximate. Trial data stays in your browser
+    unless you export it.
+  </p>
 
     <!-- Saved records are local to this browser, not a remote account. -->
     <section class="panel" aria-labelledby="historyTitle">
