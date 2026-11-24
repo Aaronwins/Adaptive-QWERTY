@@ -178,14 +178,17 @@ https://graphics.cs.uh.edu/wp-content/papers/2022/2022-AVI-keyboardComparisonStu
 
 ## Technology Stack
 
-- HTML
-- CSS
-- JavaScript
-- SymSpell-style spelling-correction index and English frequency dictionary
-- Transformers.js and pretrained DistilBERT for optional contextual reranking
-- Browser localStorage
-- GitHub for version control
-- Vercel for deployment
+- **HTML5** – Page structure and accessible interface controls
+- **CSS3** – Responsive styling and adaptive keyboard presentation
+- **JavaScript (ES6+)** – Keyboard input, thumb-reach calibration, typing metrics, and session management
+- **React 18** – Welcome screen and interactive keyboard preview
+- **SymSpell-inspired spelling correction** – English frequency dictionary and predictive suggestions
+- **Transformers.js + pretrained DistilBERT** – Optional contextual autocorrection and reranking
+- **Browser localStorage** – Saved typing history and session results
+- **Git & GitHub** – Version control and repository hosting
+- **Vercel** – Web application deployment
+
+Angular is **not** used in this project. The main typing experiment uses vanilla JavaScript; React is limited to the welcome screen and interactive preview.
 
 ## Code navigation
 
