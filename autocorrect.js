@@ -2,10 +2,13 @@
 // Symmetric-delete spelling candidates + optional pretrained contextual reranking.
 // The full-word frequency list is fetched on demand. No typed text is uploaded
 // by this application's code; the Transformers.js model runs locally after download.
+// Expose a small API to script.js without introducing a JS build system.
 window.HybridAutocorrect = (() => {
   const DICTIONARY_URL = "https://raw.githubusercontent.com/wolfgarbe/SymSpell/master/SymSpell/frequency_dictionary_en_82_765.txt";
   const MODEL_URL = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1";
   const MODEL_NAME = "Xenova/distilbert-base-uncased";
+  // counts[word] is corpus frequency; deletionIndex[shortenedForm] lists
+  // plausible original words. Both are populated after the dictionary fetch.
   const counts = new Map();
   const deletionIndex = new Map();
   let dictionaryTask = null;
@@ -13,6 +16,8 @@ window.HybridAutocorrect = (() => {
   let mlPipeline = null;
   let ready = false;
 
+  // Precompute one/two-letter deletion variants for quick candidate lookup.
+  // Example: "receive" -> "eceive", "recive", etc.
   function addDeletes(word, maxDepth) {
     let frontier = new Set([word]);
     const seen = new Set([word]);
@@ -37,6 +42,8 @@ window.HybridAutocorrect = (() => {
     }
   }
 
+  // Cache the Promise so repeated starts do not download/index twice.
+  // If fetching fails, clear the Promise to allow a later retry.
   async function loadDictionary() {
     if (ready) return true;
     if (!dictionaryTask) {
@@ -70,7 +77,8 @@ window.HybridAutocorrect = (() => {
     return dictionaryTask;
   }
 
-  // Damerau-Levenshtein distance <= 2, including adjacent transpositions.
+  // Edit distance counts insertions, deletions, replacements and neighbor swaps.
+  // We only need to distinguish up to two edits; beyond that return >2.
   function distance(a, b) {
     if (Math.abs(a.length - b.length) > 2) return 3;
     const rows = Array.from({length: a.length + 1},
@@ -93,6 +101,8 @@ window.HybridAutocorrect = (() => {
     return rows[a.length][b.length];
   }
 
+  // Generate plausible dictionary words, then rank by edit distance and
+  // word frequency. Known words remain unchanged unless ML asks for variants.
   function suggestions(word, allowRealWord = false) {
     if (!ready) return [{word, distance: 0, frequency: 0}];
     const input = word.toLowerCase();
@@ -128,6 +138,7 @@ window.HybridAutocorrect = (() => {
       ).slice(0, 12);
   }
 
+  // Conservative deterministic correction; ambiguous real words stay as typed.
   function spell(word) {
     const clean = word.toLowerCase();
     if (!ready || counts.has(clean)) return word;
@@ -140,6 +151,8 @@ window.HybridAutocorrect = (() => {
     return best.word;
   }
 
+  // Import Transformers.js dynamically only on Hybrid mode; the fill-mask
+  // pipeline downloads a quantized pretrained model and runs in-browser.
   async function loadML() {
     if (mlPipeline) return mlPipeline;
     if (!mlTask) {
@@ -159,6 +172,9 @@ window.HybridAutocorrect = (() => {
 
   // Uses preceding typed words only, never the displayed target phrase.
   // This is a conservative suggestion mechanism, not a full grammar corrector.
+  // Mask the next word after the already typed prefix, look at the model's
+  // top predicted tokens, and intersect them with spelling candidates.
+  // The target phrase is NEVER supplied to the model (avoids leakage).
   async function contextual(word, precedingText) {
     if (!mlPipeline) return null;
     const original = word.toLowerCase();
@@ -184,6 +200,7 @@ window.HybridAutocorrect = (() => {
     if (!best) return null;
     // Real English words need stronger evidence before overriding.
     const validWord = counts.has(original);
+    // Replacing a correctly spelled English word needs stronger evidence.
     const floor = validWord ? 0.12 : 0.04;
     const multiplier = validWord ? 8 : 3;
     if (best.probability < floor ||
