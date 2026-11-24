@@ -913,11 +913,31 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   }
 }
 
-/* When typing starts, replace the Text Message placeholder with the caret
- * at the first character position instead of placing it after the label. */
+/* Empty message: show the blinking caret FIRST, then the placeholder.
+ * When the first character is typed, the standard ::after caret takes over. */
 .keyboard-stage .message-composer.typing-active .typed-box:empty::before {
-  content: none;
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  margin-right: 3px;
+  background: #1877cf;
+  vertical-align: -0.19em;
+  animation: message-caret-blink 1s steps(1, end) infinite;
 }
 .keyboard-stage .message-composer.typing-active .typed-box:empty::after {
+  content: "Text Message";
+  display: inline;
+  width: auto;
+  height: auto;
   margin-left: 0;
+  background: transparent;
+  color: #8996a2;
+  vertical-align: baseline;
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .keyboard-stage .message-composer.typing-active .typed-box:empty::before {
+    animation: none;
+  }
 }
