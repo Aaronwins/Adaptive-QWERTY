@@ -700,7 +700,12 @@ async function startSession() {
 
   const count = Number($("phraseCount").value);
   const autocorrectMode = $("autocorrectMode").value;
-  const phraseSeed = Math.max(1, Math.floor(Number($("phraseSeed").value) || 1));
+  // Generate a fresh seed for each session, without asking the user.
+  // Store it with results so a completed trial's phrase order can be reproduced.
+  const seedBytes = new Uint32Array(1);
+  const phraseSeed = window.crypto && window.crypto.getRandomValues
+    ? (window.crypto.getRandomValues(seedBytes), seedBytes[0])
+    : Math.floor(Math.random() * 4294967296);
 
   if (autocorrectMode !== "off") {
     preparingSession = true;
@@ -733,7 +738,7 @@ async function startSession() {
       });
   }
 
-  // Seeded Fisher-Yates shuffle: same seed gives same phrases.
+  // Fisher-Yates shuffle with a newly generated random seed each session.
   let state = phraseSeed >>> 0;
   const random = () => {
     state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
@@ -778,7 +783,6 @@ async function startSession() {
   $("startSession").disabled = true;
   $("phraseCount").disabled = true;
   $("autocorrectMode").disabled = true;
-  $("phraseSeed").disabled = true;
   $("thumbLength").disabled = true;
   $("thumbWidth").disabled = true;
   $("startCalibration").disabled = true;
@@ -915,7 +919,6 @@ function stopSession() {
   $("startSession").disabled = false;
   $("phraseCount").disabled = false;
   $("autocorrectMode").disabled = false;
-  $("phraseSeed").disabled = false;
   $("thumbLength").disabled = false;
   $("thumbWidth").disabled = false;
   $("startCalibration").disabled = false;
