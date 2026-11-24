@@ -1584,6 +1584,8 @@ function initialize() {
     "click",
     finishPhrase
   );
+  // iMessage-style send shares the same finish action and metrics.
+  $("messageSend").addEventListener("click", finishPhrase);
 
   $("nextPhrase").addEventListener(
     "click",
