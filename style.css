@@ -648,3 +648,28 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @media (max-width: 350px) {
   .keyboard .special-row { grid-template-columns: 40px minmax(0, 1fr) 56px; }
 }
+
+/* Match the iPhone English symbols pages:
+   123: two full rows of ten symbols; #+= plus five punctuation keys and Delete.
+   #+=: two full rows of ten symbols; 123 plus five punctuation keys and Delete.
+   Do not stretch seven keys to fill ten key positions. */
+.keyboard .key-row.symbol-row:not(.symbol-bottom-row) .letter-key {
+  flex: 0 0 calc((100% - 9 * var(--key-gap)) / 10);
+  max-width: calc((100% - 9 * var(--key-gap)) / 10);
+}
+.keyboard .key-row.symbol-bottom-row {
+  justify-content: space-between;
+}
+.keyboard .key-row.symbol-bottom-row .letter-key {
+  flex: 1 1 0;
+  max-width: none;
+}
+.keyboard .key-row.symbol-bottom-row .key-modifier {
+  flex: 1.45 1 0;
+  max-width: none;
+  font-size: 15px;
+  font-weight: 500;
+}
+.keyboard .key-row.symbol-bottom-row .delete-key {
+  font-size: 22px;
+}
