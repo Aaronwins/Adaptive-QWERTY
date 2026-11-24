@@ -11,7 +11,7 @@ Spelling correction applies on Space and Finish phrase. Contextual corrections u
 
 ## Automatic phrase randomization
 
-The phrase bank contains 200 unique entries. A new random seed is generated internally every time a session starts; the app shuffles the bank and selects the requested 3, 5, or 10 phrases without repeats within that session. Users do not enter or manage seeds. The generated seed and actual target phrases are retained in the saved trial data for auditability. Randomization can introduce phrase-difficulty differences between conditions, so compare multiple sessions and rotate condition order to reduce practice effects.
+The phrase bank contains 900 unique entries. A new random seed is generated internally every time a session starts; the app shuffles the bank and selects the requested 3, 5, or 10 phrases without repeats within that session. Users do not enter or manage seeds. The generated seed and actual target phrases are retained in the saved trial data for auditability. Randomization can introduce phrase-difficulty differences between conditions, so compare multiple sessions and rotate condition order to reduce practice effects.
 
 ## CSV fields
 
