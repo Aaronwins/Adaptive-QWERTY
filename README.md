@@ -20,7 +20,9 @@ Can personalized QWERTY layouts that incorporate thumb length, thumb width, and 
 
 The current prototype includes:
 
-- A custom iOS-inspired on-screen QWERTY keyboard with uniformly sized letter keys, staggered rows, space and backspace controls
+- A compact iOS-inspired QWERTY keyboard with uniform letter widths, Shift, Backspace, Space, Return, numeric and punctuation pages
+- Desktop physical-key input (letters, Space, Backspace, punctuation, and Enter) during typing sessions
+- A React-powered welcome screen with a keyboard-layout preview and setup/test navigation
 - Left-hand and right-hand selection
 - Thumb length measurement in centimeters
 - Thumb-pad width measurement in millimeters
@@ -41,6 +43,14 @@ The current prototype includes:
 - A typing history with individual session deletion
 - CSV export of saved typing results
 - A mobile-focused interface for testing on smartphones
+
+## Welcome Screen and Keyboard Interaction
+
+The landing screen is rendered using **React 18** loaded from a CDN in `welcome.js`. The main experiment remains implemented in ordinary JavaScript (`script.js`) so its calibration, stored trials, and CSV exports continue to work without a migration to a full framework. Angular is not included: using both frameworks for the same small app would increase complexity and bundle size without adding functionality. The welcome page offers a non-interactive keyboard preview with a Standard/Adaptive visual toggle and links into the existing experiment.
+
+The interactive typing keyboard now includes Shift, Backspace, Space, Return, a numbers/symbols toggle, and extra punctuation. Its colors, spacing and row geometry are inspired by an iPhone keyboard, not an Apple system keyboard. Space is accepted between words but leading and consecutive spaces are ignored; punctuation and accepted Space presses are recorded in new CSV fields `punctuationCount` and `spacePresses`. Return finishes the current phrase. On desktop, typing with a physical keyboard is supported when a session is active and no setup field has focus. The original reach calibration and keyboard resizing logic are preserved.
+
+React and ReactDOM require network access on initial load. If the React CDN is unavailable, the existing typing lab remains accessible without the welcome screen. No Node build or Python installation is required.
 
 ## How the Adaptation Works
 
@@ -188,6 +198,7 @@ Adaptive-QWERTY/
 ├── index.html
 ├── style.css
 ├── script.js
+├── welcome.js
 ├── autocorrect.js
 ├── AUTOCORRECT.md
 └── README.md
@@ -203,7 +214,7 @@ git clone https://github.com/Aaronwins/Adaptive-QWERTY.git
 
 Open the project folder and launch `index.html` in a browser.
 
-No build process is required. However, the first spelling-enabled run needs network access to download the English frequency dictionary, and Hybrid mode additionally downloads Transformers.js and a pretrained DistilBERT model. For reliable local testing, use a local HTTP server instead of opening the file directly (for example, run `python -m http.server 8000` in the project directory and visit `http://localhost:8000`).
+No build process is required. The React landing screen requires CDN access. The first spelling-enabled run needs network access to download the English frequency dictionary, and Hybrid mode additionally downloads Transformers.js and a pretrained DistilBERT model. For reliable local testing, use a local HTTP server instead of opening the file directly (for example, run `python -m http.server 8000` in the project directory and visit `http://localhost:8000`).
 
 ## Deployment
 
