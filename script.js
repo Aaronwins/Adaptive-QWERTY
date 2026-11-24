@@ -261,6 +261,9 @@ let keyboardCase = "lower";
 let keyboardPage = "letters";
 let punctuationCount = 0;
 let spacePresses = 0;
+// Keep the prediction strip in sync with edits, not with timer ticks.
+let suggestionCacheKey = "";
+let suggestionNotice = "";
 
 // ------------------------------
 // Keyboard setup
@@ -697,6 +700,8 @@ function resetPhrase() {
   autocorrections = 0;
   mlCorrections = 0;
   phraseRecorded = false;
+  suggestionNotice = "";
+  suggestionCacheKey = "";
 
   $("errorValue").textContent = "0.0";
   $("nextPhrase").classList.add("hidden");
@@ -720,6 +725,81 @@ function renderTrial() {
     wpm(seconds, typedText).toFixed(1);
 
   $("backspaceValue").textContent = String(backspaces);
+  updateSuggestionBar();
+}
+
+// Render genuine spelling suggestions from the current word, not from
+// the target phrase. The bar is visual feedback plus tap-to-replace controls.
+function updateSuggestionBar() {
+  const strip = $("suggestionBar");
+  const hint = $("suggestionHint");
+  const choices = $("suggestionChoices");
+  const activeMode = session ? session.autocorrectMode : "off";
+  const dictionaryReady = HybridAutocorrect.isDictionaryReady();
+  const lastWord = typedText.match(/([a-z]+)$/i);
+  const key = [Boolean(session), phraseRecorded, activeMode,
+    dictionaryReady, typedText, suggestionNotice].join("|");
+  if (key === suggestionCacheKey) return;
+  suggestionCacheKey = key;
+
+  choices.replaceChildren();
+  hint.hidden = false;
+  choices.hidden = true;
+
+  if (!session) {
+    hint.textContent = "Suggestions appear here during a typing session";
+    return;
+  }
+  if (activeMode === "off") {
+    hint.textContent = "Autocorrection off";
+    return;
+  }
+  if (!dictionaryReady) {
+    hint.textContent = "Loading spelling dictionary";
+    return;
+  }
+  if (suggestionNotice && (!lastWord || typedText.endsWith(" "))) {
+    hint.textContent = suggestionNotice;
+    return;
+  }
+  if (!lastWord || phraseRecorded) {
+    hint.textContent = "Type a word to see suggestions";
+    return;
+  }
+
+  const word = lastWord[1];
+  const candidates = HybridAutocorrect.suggestions(word, true)
+    .map(item => item.word)
+    .filter((item, index, arr) => arr.indexOf(item) === index);
+  const visible = [word.toLowerCase(), ...candidates.filter(item =>
+    item !== word.toLowerCase())].slice(0, 3);
+
+  if (!visible.length) {
+    hint.textContent = "Keep typing";
+    return;
+  }
+
+  hint.hidden = true;
+  choices.hidden = false;
+  visible.forEach((candidate, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "suggestion-choice" +
+      (index === 1 ? " primary-suggestion" : "");
+    button.textContent = candidate;
+    button.setAttribute("aria-label", "Use suggestion " + candidate);
+    button.addEventListener("click", () => {
+      if (!session || phraseRecorded) return;
+      const current = typedText.match(/([a-z]+)$/i);
+      if (!current || current[1].toLowerCase() !== word.toLowerCase()) return;
+      const original = current[1];
+      typedText = typedText.slice(0, -original.length) + candidate;
+      if (original.toLowerCase() !== candidate) autocorrections++;
+      suggestionNotice = "";
+      renderTrial();
+    });
+    choices.appendChild(button);
+  });
 }
 
 // Handle taps from the app keyboard; browser/system keyboard is not involved.
@@ -733,6 +813,7 @@ function typeCharacter(character) {
   }
 
   if (character === "backspace") {
+    suggestionNotice = "";
     backspaces++;
     typedText = typedText.slice(0, -1);
   } else if (character === "space") {
@@ -749,7 +830,12 @@ function typeCharacter(character) {
 
     if (typedWord && session.autocorrectMode !== "off") {
       replacement = HybridAutocorrect.spell(typedWord);
-      if (replacement !== typedWord) autocorrections++;
+      if (replacement !== typedWord) {
+        autocorrections++;
+        suggestionNotice = "Corrected " + typedWord + " to " + replacement;
+      } else {
+        suggestionNotice = "";
+      }
     }
 
     typedText = prefix + replacement + " ";
@@ -766,11 +852,13 @@ function typeCharacter(character) {
           typedText = prefix + candidate + " ";
           if (replacement === typedWord) autocorrections++;
           mlCorrections++;
+          suggestionNotice = "Context corrected " + typedWord + " to " + candidate;
           renderTrial();
         })
         .catch(() => {});
     }
   } else {
+    suggestionNotice = "";
     typedText += character;
     if (/^[.,!?;:\x27"@#$%&+()\/-]$/.test(character)) punctuationCount++;
   }
