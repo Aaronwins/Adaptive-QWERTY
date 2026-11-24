@@ -739,6 +739,9 @@ function resetPhrase() {
 // Refresh displayed text and running statistics while the timer is active.
 function renderTrial() {
   $("typedText").textContent = typedText;
+  // Show a blinking caret only while a phrase is available for typing.
+  // This is visual feedback; it does not create a native text input.
+  $("messageComposer").classList.toggle("typing-active", Boolean(session) && !phraseRecorded);
 
   const seconds = elapsedSeconds();
 
