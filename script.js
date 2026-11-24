@@ -251,28 +251,85 @@ let mlCorrections = 0;
 let preparingSession = false;
 let timerId = null;
 let phraseRecorded = false;
+// Appearance-only state for the on-screen mobile keyboard.
+let keyboardCase = "lower";
+let keyboardPage = "letters";
+let punctuationCount = 0;
+let spacePresses = 0;
 
 // ------------------------------
 // Keyboard setup
 // ------------------------------
 
 // Create actual letter buttons once; index.html defines only the row containers.
-function createKeyboard() {
-  ROWS.forEach((letters, rowNumber) => {
-    const row = document.querySelector(`[data-row="${rowNumber}"]`);
+const SYMBOL_ROWS = ["1234567890", "@#$%&-+()/", "*\"':;!?"];
+const QWERTY_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
 
-    for (const letter of letters) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "key";
-      button.textContent = letter;
-      button.setAttribute("aria-label", letter);
-      button.addEventListener("click", () =>
-        typeCharacter(letter.toLowerCase())
-      );
-      row.appendChild(button);
+// Render a compact iOS-inspired arrangement, with equal-width letter keys.
+function createKeyboard() {
+  renderKeyboardPage();
+}
+
+function addKeyboardKey(row, label, key, className) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "key " + (className || "");
+  button.textContent = label;
+  button.setAttribute("aria-label", label);
+  button.dataset.key = key;
+  button.addEventListener("click", () => handleKeyboardKey(key));
+  row.appendChild(button);
+}
+
+function renderKeyboardPage() {
+  const letterMode = keyboardPage === "letters";
+  const rows = letterMode ? QWERTY_ROWS : SYMBOL_ROWS;
+  document.querySelectorAll(".key-row[data-row]").forEach((row, index) => {
+    row.replaceChildren();
+    if (index === 2) {
+      addKeyboardKey(row, letterMode ? "⇧" : "#+=", letterMode ? "shift" : "more-symbols",
+        "key-modifier shift-key" + (keyboardCase === "upper" && letterMode ? " selected" : ""));
+    }
+    for (const character of rows[index]) {
+      const label = letterMode && keyboardCase === "upper"
+        ? character.toUpperCase() : character;
+      addKeyboardKey(row, label, character, "letter-key");
+    }
+    if (index === 2) {
+      addKeyboardKey(row, "⌫", "backspace", "key-modifier delete-key");
     }
   });
+  $("numberToggle").textContent = letterMode ? "123" : "ABC";
+  $("numberToggle").setAttribute("aria-label", letterMode
+    ? "Switch to numbers and symbols" : "Switch to letters");
+}
+
+function handleKeyboardKey(key) {
+  if (key === "numbers") {
+    keyboardPage = keyboardPage === "letters" ? "numbers" : "letters";
+    renderKeyboardPage();
+    return;
+  }
+  if (key === "shift") {
+    keyboardCase = keyboardCase === "upper" ? "lower" : "upper";
+    renderKeyboardPage();
+    return;
+  }
+  if (key === "more-symbols") return;
+  if (key === "return") {
+    if (session && !phraseRecorded) finishPhrase();
+    return;
+  }
+  if (key === "period") key = ".";
+  if (key === "space" || key === "backspace") {
+    typeCharacter(key);
+    return;
+  }
+  typeCharacter(keyboardCase === "upper" ? key.toUpperCase() : key);
+  if (keyboardCase === "upper" && /^[a-z]$/i.test(key)) {
+    keyboardCase = "lower";
+    renderKeyboardPage();
+  }
 }
 
 function selectButtons(selector, dataKey, value) {
@@ -625,6 +682,8 @@ function resetPhrase() {
   startedAt = null;
   finishedAt = null;
   backspaces = 0;
+  spacePresses = 0;
+  punctuationCount = 0;
   autocorrections = 0;
   mlCorrections = 0;
   phraseRecorded = false;
@@ -667,6 +726,12 @@ function typeCharacter(character) {
     backspaces++;
     typedText = typedText.slice(0, -1);
   } else if (character === "space") {
+    // Ignore spaces at the beginning or two spaces in a row.
+    if (!typedText || typedText.endsWith(" ")) {
+      renderTrial();
+      return;
+    }
+    spacePresses++;
     const match = typedText.match(/([a-z]+)$/i);
     const typedWord = match ? match[1] : "";
     const prefix = typedText.slice(0, typedText.length - typedWord.length);
@@ -697,6 +762,7 @@ function typeCharacter(character) {
     }
   } else {
     typedText += character;
+    if (/^[.,!?;:\x27"@#$%&+()\/-]$/.test(character)) punctuationCount++;
   }
 
   renderTrial();
@@ -887,6 +953,8 @@ function finishPhrase() {
     wpm: Number(wpm(seconds, typedText).toFixed(2)),
     errorPercent: Number(error.toFixed(2)),
     backspaces,
+    spacePresses,
+    punctuationCount,
     autocorrectMode: session.autocorrectMode,
     autocorrections,
     mlCorrections,
@@ -1200,6 +1268,8 @@ function exportCsv() {
     "wpm",
     "errorPercent",
     "backspaces",
+    "spacePresses",
+    "punctuationCount",
     "autocorrectMode",
     "autocorrections",
     "mlCorrections",
@@ -1227,6 +1297,8 @@ function exportCsv() {
       wpm: trial.wpm,
       errorPercent: trial.errorPercent,
       backspaces: trial.backspaces,
+      spacePresses: trial.spacePresses ?? 0,
+      punctuationCount: trial.punctuationCount ?? 0,
       autocorrectMode: trial.autocorrectMode ?? "off",
       autocorrections: trial.autocorrections ?? 0,
       mlCorrections: trial.mlCorrections ?? 0,
@@ -1346,19 +1418,35 @@ function initialize() {
     () => $("calibrationPanel").classList.add("hidden")
   );
 
-  document.querySelector(
-    '[data-key="space"]'
-  ).addEventListener(
-    "click",
-    () => typeCharacter("space")
-  );
+  // Static control keys use the same handler as dynamic letter keys.
+  ["space", "period", "return"].forEach(key => {
+    document.querySelector('[data-key="' + key + '"]')
+      .addEventListener("click", () => handleKeyboardKey(key));
+  });
+  $("numberToggle").addEventListener("click", () => handleKeyboardKey("numbers"));
 
-  document.querySelector(
-    '[data-key="backspace"]'
-  ).addEventListener(
-    "click",
-    () => typeCharacter("backspace")
-  );
+  // Also support desktop typing without intercepting setup form fields.
+  document.addEventListener("keydown", event => {
+    if (!session || phraseRecorded || document.body.classList.contains("landing-active")) return;
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    const tag = event.target && event.target.tagName;
+    if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+    const key = event.key;
+    if (key === "Shift") return;
+    if (key === "Enter") {
+      event.preventDefault();
+      finishPhrase();
+    } else if (key === "Backspace") {
+      event.preventDefault();
+      typeCharacter("backspace");
+    } else if (key === " ") {
+      event.preventDefault();
+      typeCharacter("space");
+    } else if (key.length === 1 && /^[a-z0-9.,!?;:'"@#$%&+()/-]$/i.test(key)) {
+      event.preventDefault();
+      typeCharacter(key);
+    }
+  });
 
   $("startSession").addEventListener(
     "click",
