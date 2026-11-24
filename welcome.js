@@ -100,7 +100,7 @@
       ),
       h("main", { className: "welcome-main" },
         h("section", { className: "welcome-introduction" },
-          h("span", { className: "welcome-kicker" }, "TYPING RESEARCH / HCI PROJECT"),
+          h("span", { className: "welcome-kicker" }, "Adaptive QWERTY"),
           h("h1", null, "The keyboard you know,", h("span", null, " adjusted for you.")),
           h("p", { className: "welcome-description" },
             "Test a familiar QWERTY layout that adapts to your thumb reach. Compare layouts, typing speed, accuracy, and autocorrection in a simple mobile experiment."
