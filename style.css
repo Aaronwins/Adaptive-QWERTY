@@ -673,3 +673,28 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .keyboard .key-row.symbol-bottom-row .delete-key {
   font-size: 22px;
 }
+
+/* Phone-sized Standard baseline. Unlike the page panels, the keyboard
+ * extends almost to the device edges on narrow screens, as iOS does.
+ * Adaptive width/offset percentages in script.js remain relative to
+ * this same dock, so the experimental conditions stay comparable.
+ * Desktop stays within the app's simulated phone viewport. */
+@media (max-width: 520px) {
+  .keyboard-dock {
+    width: calc(100vw - 12px);
+    width: calc(100dvw - 12px);
+    margin-left: calc(50% - 50vw + 6px);
+    margin-left: calc(50% - 50dvw + 6px);
+    padding: 10px 5px 9px;
+    border-radius: 12px;
+  }
+  .keyboard .key { height: 48px; }
+  .keyboard .special-row .key { height: 44px; }
+  .keyboard .key-row { margin-bottom: 7px; }
+  .keyboard .special-row { margin-bottom: 0; }
+}
+@media (max-width: 350px) {
+  .keyboard .key { height: 45px; }
+  .keyboard .special-row .key { height: 42px; }
+  .keyboard { --key-gap: 3px; }
+}
