@@ -27,7 +27,57 @@ const PHRASES = [
   "i forgot to bring my umbrella",
   "our friends are coming tomorrow",
   "the garden has many green plants",
-  "every student finished the quiz"
+  "every student finished the quiz",
+  "the package arrived earlier than expected",
+  "we watched a movie last night",
+  "the morning traffic was unusually light",
+  "please check the meeting schedule",
+  "the children played in the park",
+  "a gentle breeze moved the curtains",
+  "my laptop needs a new charger",
+  "the bakery sells fresh bread",
+  "we should leave before sunset",
+  "the teacher explained the problem",
+  "this book has an interesting ending",
+  "he placed the keys near the door",
+  "the doctor called this afternoon",
+  "a red bicycle passed the shop",
+  "she prepared dinner for everyone",
+  "the printer ran out of paper",
+  "our flight departs early tomorrow",
+  "the concert starts at seven",
+  "i sent a message to my brother",
+  "the blue jacket fits perfectly",
+  "they discovered a quiet restaurant",
+  "the bus stopped near the station",
+  "please remember your appointment",
+  "the little cat climbed the stairs",
+  "the computer finished the update",
+  "i found a comfortable chair",
+  "the flowers smell wonderful today",
+  "we crossed the street carefully",
+  "the classroom was very quiet",
+  "she ordered a glass of water",
+  "the neighbor repaired the fence",
+  "the grocery store closes tonight",
+  "this recipe uses fresh tomatoes",
+  "please leave your shoes outside",
+  "my friend bought a new camera",
+  "we visited the city museum",
+  "he carried the heavy suitcase",
+  "the sunset painted the clouds",
+  "the restaurant served warm soup",
+  "the student answered the question",
+  "a short walk helped me relax",
+  "the musician practiced every day",
+  "the train crossed the bridge",
+  "remember to charge your phone",
+  "the office opens at nine",
+  "i read the article yesterday",
+  "the puppy slept beside the sofa",
+  "we took pictures near the lake",
+  "the instructions were easy to follow",
+  "the window overlooks the garden"
 ];
 
 const X_POSITIONS = [0.17, 0.50, 0.83];
@@ -60,6 +110,9 @@ let typedText = "";
 let startedAt = null;
 let finishedAt = null;
 let backspaces = 0;
+let autocorrections = 0;
+let mlCorrections = 0;
+let preparingSession = false;
 let timerId = null;
 let phraseRecorded = false;
 
@@ -432,6 +485,8 @@ function resetPhrase() {
   startedAt = null;
   finishedAt = null;
   backspaces = 0;
+  autocorrections = 0;
+  mlCorrections = 0;
   phraseRecorded = false;
 
   $("errorValue").textContent = "—";
@@ -468,17 +523,44 @@ function typeCharacter(character) {
   if (character === "backspace") {
     backspaces++;
     typedText = typedText.slice(0, -1);
+  } else if (character === "space") {
+    const match = typedText.match(/([a-z]+)$/i);
+    const typedWord = match ? match[1] : "";
+    const prefix = typedText.slice(0, typedText.length - typedWord.length);
+    let replacement = typedWord;
+
+    if (typedWord && session.autocorrectMode !== "off") {
+      replacement = HybridAutocorrect.spell(typedWord);
+      if (replacement !== typedWord) autocorrections++;
+    }
+
+    typedText = prefix + replacement + " ";
+
+    // Contextual ML is deliberately asynchronous; never overwrite text
+    // that has changed since the suggestion request was started.
+    if (typedWord && session.autocorrectMode === "hybrid" &&
+        HybridAutocorrect.isMLReady()) {
+      const snapshot = typedText;
+      HybridAutocorrect.contextual(typedWord, prefix)
+        .then(candidate => {
+          if (!candidate || phraseRecorded || !session ||
+              typedText !== snapshot || candidate === replacement) return;
+          typedText = prefix + candidate + " ";
+          if (replacement === typedWord) autocorrections++;
+          mlCorrections++;
+          renderTrial();
+        })
+        .catch(() => {});
+    }
   } else {
-    typedText += character === "space"
-      ? " "
-      : character;
+    typedText += character;
   }
 
   renderTrial();
 }
 
-function startSession() {
-  if (session) return;
+async function startSession() {
+  if (session || preparingSession) return;
 
   if (mode === "adaptive" && !chosenLayout) {
     $("sessionStatus").textContent =
@@ -487,9 +569,52 @@ function startSession() {
   }
 
   const count = Number($("phraseCount").value);
+  const autocorrectMode = $("autocorrectMode").value;
+  const phraseSeed = Math.max(1, Math.floor(Number($("phraseSeed").value) || 1));
 
-  // Same phrases across modes for a more controlled comparison.
-  const selectedPhrases = PHRASES.slice(0, count);
+  if (autocorrectMode !== "off") {
+    preparingSession = true;
+    $("startSession").disabled = true;
+    $("autocorrectStatus").textContent = "Loading English dictionary...";
+    try {
+      await HybridAutocorrect.loadDictionary();
+    } catch (error) {
+      $("autocorrectStatus").textContent =
+        "Dictionary could not load. Check your internet connection.";
+      preparingSession = false;
+      $("startSession").disabled = false;
+      return;
+    }
+    preparingSession = false;
+    $("startSession").disabled = false;
+    $("autocorrectStatus").textContent = "Spelling dictionary ready.";
+  }
+
+  if (autocorrectMode === "hybrid" && !HybridAutocorrect.isMLReady()) {
+    $("autocorrectStatus").textContent =
+      "Loading contextual model in background; spelling works meanwhile.";
+    HybridAutocorrect.loadML()
+      .then(() => {
+        $("autocorrectStatus").textContent = "Contextual ML model ready.";
+      })
+      .catch(() => {
+        $("autocorrectStatus").textContent =
+          "ML unavailable; spelling correction remains active.";
+      });
+  }
+
+  // Seeded Fisher-Yates shuffle: same seed gives same phrases.
+  let state = phraseSeed >>> 0;
+  const random = () => {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
+  const shuffled = [...PHRASES];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  const selectedPhrases = shuffled.slice(0, count);
 
   const now = new Date();
 
@@ -497,6 +622,8 @@ function startSession() {
     id: `${now.getTime()}-${Math.random().toString(36).slice(2, 10)}`,
     createdAt: now.toISOString(),
     mode,
+    autocorrectMode,
+    phraseSeed,
     hand,
     thumbCm: getThumbLength(),
     thumbWidthMm: getThumbWidth(),
@@ -520,6 +647,8 @@ function startSession() {
 
   $("startSession").disabled = true;
   $("phraseCount").disabled = true;
+  $("autocorrectMode").disabled = true;
+  $("phraseSeed").disabled = true;
   $("thumbLength").disabled = true;
   $("thumbWidth").disabled = true;
   $("startCalibration").disabled = true;
@@ -576,6 +705,8 @@ function finishPhrase() {
 
   const result = {
     mode: session.mode,
+    autocorrectMode: session.autocorrectMode,
+    phraseSeed: session.phraseSeed,
     hand: session.hand,
     thumbCm: session.thumbCm,
     thumbWidthMm: session.thumbWidthMm,
@@ -586,7 +717,11 @@ function finishPhrase() {
     seconds: Number(seconds.toFixed(2)),
     wpm: Number(wpm(seconds, typedText).toFixed(2)),
     errorPercent: Number(error.toFixed(2)),
-    backspaces
+    backspaces,
+    autocorrectMode: session.autocorrectMode,
+    autocorrections,
+    mlCorrections,
+    phraseSeed: session.phraseSeed
   };
 
   completedTrials.push(result);
@@ -633,6 +768,8 @@ function stopSession() {
 
   $("startSession").disabled = false;
   $("phraseCount").disabled = false;
+  $("autocorrectMode").disabled = false;
+  $("phraseSeed").disabled = false;
   $("thumbLength").disabled = false;
   $("thumbWidth").disabled = false;
   $("startCalibration").disabled = false;
@@ -889,7 +1026,11 @@ function exportCsv() {
     "seconds",
     "wpm",
     "errorPercent",
-    "backspaces"
+    "backspaces",
+    "autocorrectMode",
+    "autocorrections",
+    "mlCorrections",
+    "phraseSeed"
   ];
 
   const rows = savedSessions.flatMap(item =>
@@ -911,7 +1052,11 @@ function exportCsv() {
       seconds: trial.seconds,
       wpm: trial.wpm,
       errorPercent: trial.errorPercent,
-      backspaces: trial.backspaces
+      backspaces: trial.backspaces,
+      autocorrectMode: trial.autocorrectMode ?? "off",
+      autocorrections: trial.autocorrections ?? 0,
+      mlCorrections: trial.mlCorrections ?? 0,
+      phraseSeed: trial.phraseSeed ?? ""
     }))
   );
 
