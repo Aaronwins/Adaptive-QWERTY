@@ -177,6 +177,10 @@ https://graphics.cs.uh.edu/wp-content/papers/2022/2022-AVI-keyboardComparisonStu
 - GitHub for version control
 - Vercel for deployment
 
+## Code navigation
+
+The source files include comments explaining the main data flow. Start with `index.html` for the UI sections and control IDs, `style.css` for layout and touch-friendly appearance, `script.js` for calibration/typing/testing/history, and `autocorrect.js` for dictionary indexing and optional pretrained contextual reranking. `AUTOCORRECT.md` documents model-loading behavior and how to interpret the new experiment fields.
+
 ## Project Structure
 
 ```text
