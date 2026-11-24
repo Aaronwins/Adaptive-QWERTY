@@ -29,6 +29,13 @@ Model: https://huggingface.co/Xenova/distilbert-base-uncased
 
 This is a SymSpell-inspired JavaScript implementation, not the official C# implementation.
 
+## Where the code lives
+
+- `index.html` defines the three correction modes and displays model-loading status.
+- `script.js` starts sessions, shuffles the 200 fixed phrases, applies corrections when typing, and records results.
+- `autocorrect.js` fetches and indexes English word frequencies, suggests spelling corrections, and optionally loads DistilBERT to rerank candidates.
+- `style.css` controls the mobile layout and keyboard appearance; it does not run any model.
+
 ## Manual verification
 
 1. In Spelling mode, type teh followed by Space; verify it changes to the.
