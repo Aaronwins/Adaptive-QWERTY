@@ -692,6 +692,21 @@ function finishPhrase() {
     return;
   }
 
+  // Apply spelling to the final word even when there is no trailing space.
+  // Contextual reranking remains optional because it is asynchronous.
+  if (session.autocorrectMode !== "off") {
+    const finalWord = typedText.match(/([a-z]+)$/i);
+    if (finalWord) {
+      const original = finalWord[1];
+      const corrected = HybridAutocorrect.spell(original);
+      if (corrected !== original) {
+        typedText = typedText.slice(0, -original.length) + corrected;
+        autocorrections++;
+        renderTrial();
+      }
+    }
+  }
+
   finishedAt = performance.now();
   window.clearInterval(timerId);
   phraseRecorded = true;
@@ -721,6 +736,7 @@ function finishPhrase() {
     autocorrectMode: session.autocorrectMode,
     autocorrections,
     mlCorrections,
+    mlModelReady: HybridAutocorrect.isMLReady(),
     phraseSeed: session.phraseSeed
   };
 
@@ -1030,6 +1046,7 @@ function exportCsv() {
     "autocorrectMode",
     "autocorrections",
     "mlCorrections",
+    "mlModelReady",
     "phraseSeed"
   ];
 
@@ -1056,6 +1073,7 @@ function exportCsv() {
       autocorrectMode: trial.autocorrectMode ?? "off",
       autocorrections: trial.autocorrections ?? 0,
       mlCorrections: trial.mlCorrections ?? 0,
+      mlModelReady: trial.mlModelReady ?? false,
       phraseSeed: trial.phraseSeed ?? ""
     }))
   );
