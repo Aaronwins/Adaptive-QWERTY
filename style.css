@@ -599,3 +599,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .keyboard .special-row { grid-template-columns: 35px minmax(0, 1fr) 23px 43px; }
   .suggestion-choice { font-size: 12px; padding: 5px 3px; }
 }
+
+/* The native hidden attribute must override flex display in the suggestion bar. */
+.suggestion-hint[hidden], .suggestion-choices[hidden] { display: none !important; }
