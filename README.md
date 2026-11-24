@@ -127,7 +127,7 @@ The typing test now supports **three modes**, independently of Standard versus A
 | **Spelling dictionary** | Uses a SymSpell-style symmetric-delete candidate index and a large English word-frequency list to correct likely misspellings when Space is pressed or a phrase is finished. |
 | **Hybrid (spelling + contextual ML)** | Adds a pretrained **DistilBERT** masked-language model, loaded with **Transformers.js**, to consider preceding typed words when reranking spelling candidates. |
 
-The spelling approach is inspired by SymSpell; it is **not** an import of the original C# library. The contextual model is **pretrained** and runs inference locally in the browser—**no training or fine-tuning is performed**. This does **not** mean that the keyboard adaptation algorithm itself uses machine learning.
+The spelling approach is inspired by SymSpell; it is **not** an import of the original C# library. The contextual model is **pretrained** and runs inference locally in the browser. **No model training or fine tuning is performed**. This does **not** mean that the keyboard adaptation algorithm itself uses machine learning.
 
 The English frequency dictionary is downloaded when spelling correction is first used. In Hybrid mode, the browser also downloads the pretrained model on demand, which may consume significant bandwidth and memory. **Spelling correction remains available while the ML model loads or if it fails to initialize.** A status message indicates model readiness.
 
