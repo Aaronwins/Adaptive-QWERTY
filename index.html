@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f7f8fe">
+  <meta name="theme-color" content="#f6f9fb">
   <title>Adaptive QWERTY | HCI Prototype</title>
   <!-- CSS controls appearance; JavaScript handles input, calibration, and results. -->
   <link rel="stylesheet" href="style.css">
@@ -20,7 +20,12 @@
 <div id="welcomeRoot"></div>
 <main class="app" id="typingLab">
   <header class="header">
-    <button type="button" id="homeLink" class="text-button home-link">← Back to home</button>
+    <!-- Sticky navigation stays visible even after scrolling through the experiment. -->
+    <nav class="lab-navigation" aria-label="Lab navigation">
+      <a id="homeLink" class="lab-home-link" href="#home" aria-label="Back to home"><span aria-hidden="true">←</span> Home</a>
+      <span class="lab-navigation-title">Typing lab</span>
+      <a class="lab-github-link" href="https://github.com/Aaronwins/Adaptive-QWERTY" target="_blank" rel="noopener noreferrer">Source</a>
+    </nav>
     <p class="eyebrow">ONE HANDED TYPING</p>
     <h1>Adaptive QWERTY</h1>
     <p class="subtitle">A keyboard that fits how you type.</p>
