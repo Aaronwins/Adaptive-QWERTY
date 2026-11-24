@@ -625,3 +625,26 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .welcome-demo-label,
   .welcome-demo-controls { max-width: 365px; }
 }
+
+/* Match the familiar three-part iOS letter keyboard bottom row.
+ * Punctuation remains accessible through the 123 symbol page. */
+.keyboard .special-row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 64px;
+  gap: 5px;
+}
+.keyboard .special-row .space-key {
+  width: 100%;
+  min-width: 0;
+  background: #fff;
+  font-size: 15px;
+}
+.keyboard .special-row .return-key {
+  width: 100%;
+  min-width: 0;
+  font-size: 12px;
+  text-transform: none;
+}
+@media (max-width: 350px) {
+  .keyboard .special-row { grid-template-columns: 40px minmax(0, 1fr) 56px; }
+}
