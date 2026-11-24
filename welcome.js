@@ -92,7 +92,7 @@
 
     return h("div", { className: "welcome-page" },
       h("header", { className: "welcome-topbar" },
-        h("span", { className: "welcome-wordmark" }, "adaptive", h("span", null, "qwerty")),
+        h("span", { className: "welcome-wordmark" }, "Adaptive ", h("span", null, "QWERTY")),
         h("div", { className: "welcome-top-actions" },
           h("a", { href: "https://github.com/Aaronwins/Adaptive-QWERTY", target: "_blank", rel: "noopener noreferrer" }, "GitHub"),
           h("button", { type: "button", className: "welcome-open", onClick: () => go("lab") }, "Open lab")
@@ -111,7 +111,7 @@
           ),
           h("div", { className: "welcome-facts" },
             h("div", null, h("strong", null, "06"), h("span", null, "Reach checks")),
-            h("div", null, h("strong", null, "undefined"), h("span", null, "Practice phrases")),
+            h("div", null, h("strong", null, "1,000"), h("span", null, "Practice phrases")),
             h("div", null, h("strong", null, "03"), h("span", null, "Correction modes"))
           )
         ),
