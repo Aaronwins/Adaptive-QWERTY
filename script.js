@@ -981,6 +981,7 @@ async function startSession() {
   completedTrials = [];
 
   $("trialArea").classList.remove("hidden");
+  $("messageComposer").classList.remove("hidden");
   $("resultsPanel").classList.add("hidden");
 
   $("startSession").disabled = true;
@@ -1124,6 +1125,7 @@ function stopSession() {
   session = null;
 
   $("trialArea").classList.add("hidden");
+  $("messageComposer").classList.add("hidden");
 
   $("startSession").disabled = false;
   $("phraseCount").disabled = false;
