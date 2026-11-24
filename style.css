@@ -768,3 +768,55 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .suggestion-bar { min-height: 34px; margin-bottom: 6px; }
 }
 /* Preserve the three-key bottom row even at the narrowest viewport sizes. */
+
+/* Native-phone inspired bottom gesture clearance. This is outside the
+ * Standard/Adaptive key widths and never participates in keystroke metrics. */
+.keyboard-home-area {
+  box-sizing: border-box;
+  height: 50px;
+  padding-bottom: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.keyboard-home-indicator {
+  width: 112px;
+  max-width: 38%;
+  height: 4px;
+  border-radius: 99px;
+  background: #596372;
+  opacity: .8;
+}
+@media (max-width: 600px) and (orientation: portrait) {
+  .keyboard-home-area {
+    height: calc(50px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  .keyboard-home-area { height: 28px; padding-bottom: 5px; }
+}
+
+/* Message-style output for the same measured keyboard input.
+ * Return and Finish phrase remain the two deliberate completion controls. */
+.message-composer {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.message-composer .typed-box {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  padding: 12px 15px;
+  border: 1px solid #bfcad6;
+  border-radius: 23px;
+  background: #fff;
+  line-height: 1.4;
+}
+.message-composer .typed-box:empty::before {
+  content: "Text Message";
+  color: #8996a2;
+  pointer-events: none;
+}
