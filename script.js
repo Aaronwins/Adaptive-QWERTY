@@ -270,8 +270,8 @@ let suggestionNotice = "";
 // ------------------------------
 
 // Create actual letter buttons once; index.html defines only the row containers.
-const SYMBOL_ROWS = ["1234567890","@#$%&-+()/",".*\"':;!?"];
-const EXTRA_SYMBOL_ROWS = ["[]{}<>^~|\\", "_=+£€¥•", ".,?!;:'"];
+const SYMBOL_ROWS = ["1234567890","@#$%&-+()/",".\"':;!?"];
+const EXTRA_SYMBOL_ROWS = ["[]{}<>^~|\\","_=+£€¥•","*,?!;:'"];
 const QWERTY_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"];
 
 // Render a compact iOS-inspired arrangement, with equal-width letter keys.
