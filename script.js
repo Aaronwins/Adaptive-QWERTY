@@ -815,7 +815,9 @@ function updateSuggestionBar() {
       const current = typedText.match(/([a-z]+)$/i);
       if (!current || current[1].toLowerCase() !== word.toLowerCase()) return;
       const original = current[1];
-      typedText = typedText.slice(0, -original.length) + candidate;
+      // Choosing a predictive suggestion commits the word and inserts the
+      // following space, as on iOS. Don't count it as a manual Space press.
+      typedText = typedText.slice(0, -original.length) + candidate + " ";
       if (original.toLowerCase() !== candidate) autocorrections++;
       suggestionNotice = "";
       renderTrial();
