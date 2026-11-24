@@ -9,9 +9,9 @@ The browser downloads the dictionary on first use. The pretrained language model
 
 Spelling correction applies on Space and Finish phrase. Contextual corrections use preceding typed words only, never the target phrase. Model suggestions may be skipped if the user keeps typing before inference completes. Autocorrection can make wrong substitutions.
 
-## Reproducible phrase testing
+## Automatic phrase randomization
 
-The phrase bank has 200 unique entries. Enter the same Random phrase set number to obtain the same shuffled order for each experimental condition. Compare Standard/Adaptive and Off/Spelling/Hybrid with a consistent seed, phrase count, and hand. Rotate the testing order across different seeds to mitigate practice effects.
+The phrase bank contains 200 unique entries. A new random seed is generated internally every time a session starts; the app shuffles the bank and selects the requested 3, 5, or 10 phrases without repeats within that session. Users do not enter or manage seeds. The generated seed and actual target phrases are retained in the saved trial data for auditability. Randomization can introduce phrase-difficulty differences between conditions, so compare multiple sessions and rotate condition order to reduce practice effects.
 
 ## CSV fields
 
@@ -32,7 +32,7 @@ This is a SymSpell-inspired JavaScript implementation, not the official C# imple
 ## Manual verification
 
 1. In Spelling mode, type teh followed by Space; verify it changes to the.
-2. Change the seed and verify a different phrase order; reuse the seed and verify the same order.
+2. Start multiple sessions and verify that each selects fresh phrases without duplicates within a session.
 3. In Hybrid mode, verify model-ready status before evaluating contextual changes.
 4. Check the new CSV columns and that previous typing history still appears.
 5. Retest hand calibration, mobile keyboard buttons and both Standard and Adaptive layouts.
