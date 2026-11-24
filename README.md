@@ -28,7 +28,7 @@ The current prototype includes:
 - Adaptive keyboard sizing and horizontal positioning
 - Standard and Adaptive QWERTY modes
 - Transcription sessions with 3, 5, or 10 phrases selected from 200 unique sentences
-- Reproducible randomized phrase sets controlled by a numeric seed
+- Automatic fresh random phrase selection for each session, without a seed input
 - Optional autocorrection: Off, Spelling dictionary, or Hybrid contextual ML
 - SymSpell-style correction backed by a large English word-frequency dictionary
 - Pretrained DistilBERT via Transformers.js for optional context-aware candidate reranking (no model training required)
@@ -82,7 +82,7 @@ The keyboard keeps the standard QWERTY letter arrangement. The adaptation change
 
 Users can complete typing sessions using either the Standard or Adaptive keyboard.
 
-The app selects 3, 5, or 10 phrases from a bank of **200 unique sentences** using a reproducible seeded shuffle. Enter the **same phrase-set number** when testing different keyboard layouts or autocorrection settings to obtain the same phrases in the same order. Change the seed to obtain a different sequence. No phrase repeats within an individual session.
+The app automatically shuffles a bank of **200 unique sentences** at the beginning of every session, selecting 3, 5, or 10 phrases without repetition within the session. Users do not need to enter a random seed. The app records an automatically generated seed internally for reproducibility and saves the exact target phrases with each trial.
 
 The application records:
 
@@ -99,7 +99,7 @@ The application records:
 - Autocorrection setting (Off / Spelling / Hybrid)
 - Number of automatic word substitutions
 - Number of contextual-ML substitutions and model readiness
-- Random phrase-set seed
+- Automatically generated phrase-set seed (for research records)
 
 Completed trials are saved in the browser using localStorage. Results normally remain available after refreshing the page or closing the tab.
 
@@ -125,7 +125,7 @@ Corrections are deliberately conservative. The system does not guarantee that ev
 
 The CSV includes `autocorrectMode`, `autocorrections`, `mlCorrections`, `mlModelReady`, and `phraseSeed`. The substitution counts indicate **actions**, not independently verified successful corrections. A Hybrid setting does not imply that the model actually ran during every phrase; inspect the readiness and ML-count fields.
 
-For controlled comparisons, hold the typing hand, phrase count, and random seed constant across Standard/Adaptive and Off/Spelling/Hybrid conditions. Rotate condition order on additional seeds to reduce practice effects. **The earlier 40 baseline trials used fixed phrases and should be analyzed separately from new randomized trials.**
+For comparisons, keep the typing hand and phrase count consistent and rotate the order of Standard/Adaptive and Off/Spelling/Hybrid conditions. Since each session receives fresh phrases, phrase difficulty can differ between conditions; use multiple sessions and compare results across them. The automatically generated seed and target phrases remain in the CSV to support auditing. **The earlier 40 baseline trials used fixed phrases and should be analyzed separately from new randomized trials.**
 
 More details and manual checks: [AUTOCORRECT.md](AUTOCORRECT.md).
 
@@ -164,7 +164,7 @@ https://graphics.cs.uh.edu/wp-content/papers/2022/2022-AVI-keyboardComparisonStu
 - Browser storage can be cleared or removed, so CSV export is important for preserving research results.
 - Autocorrection may introduce incorrect substitutions; the ML model may be unavailable or slow on some mobile browsers.
 - The contextual model is not a full sentence-level grammar correction system.
-- The seeded phrase bank reduces repetition within a session, but repeated seeds and repeated testing can still produce learning effects.
+- Randomization prevents repeated phrases within a session, but phrase difficulty and practice effects can still influence performance.
 
 ## Technology Stack
 
