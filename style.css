@@ -602,3 +602,26 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 /* The native hidden attribute must override flex display in the suggestion bar. */
 .suggestion-hint[hidden], .suggestion-choices[hidden] { display: none !important; }
+
+
+/* Make the welcome screen's phone and keyboard preview easier to inspect.
+ * Keep it responsive so the phone never overflows narrow mobile screens. */
+.preview-phone {
+  width: min(100%, 335px);
+  height: 540px;
+}
+.preview-key-row { gap: 4px; margin-bottom: 7px; }
+.preview-key {
+  flex-basis: calc((100% - 9 * 4px) / 10);
+  height: 31px;
+  font-size: 13px;
+}
+.preview-modifier { height: 31px; font-size: 11px; }
+.preview-bottom .preview-modifier { flex-basis: 48px; }
+.preview-keyboard-base { padding: 10px 5px 5px; }
+.welcome-demo-label,
+.welcome-demo-controls { max-width: 365px; }
+@media (max-width: 760px) {
+  .welcome-demo-label,
+  .welcome-demo-controls { max-width: 365px; }
+}
