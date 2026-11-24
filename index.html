@@ -219,7 +219,7 @@
         <div id="typedText" class="typed-box" role="textbox" tabindex="0"
              aria-readonly="true" aria-label="Text message, use the custom keyboard to type"
              aria-live="polite"></div>
-        <span class="message-composer-send" aria-hidden="true">↑</span>
+        <button type="button" id="messageSend" class="message-composer-send" aria-label="Finish phrase and send message" title="Finish phrase">↑</button>
       </div>
       <!-- Suggestions sit directly above the keys, like an iOS predictive-text bar.
            Suggestions are derived from the typed word, never the target prompt. -->
@@ -246,14 +246,14 @@
     <div class="keyboard-home-area" aria-hidden="true">
       <div class="keyboard-home-indicator"></div>
     </div>
+    <!-- Instructions remain within the gray keyboard dock, below the keys. -->
+    <p class="keyboard-help">
+      Tap return, the blue send arrow, or Finish phrase to complete a phrase.
+      On a computer, letters, Space, Backspace, Enter, and punctuation also
+      work from the physical keyboard. Reach estimates are approximate.
+      Trial data stays in your browser unless you export it.
+    </p>
   </section>
-  <!-- Always-visible instructions follow the keyboard, as before. -->
-  <p class="keyboard-help">
-    Tap return to finish a phrase. On a computer, you can also use the
-    physical keyboard for letters, Space, Backspace, Enter and punctuation.
-    Reach estimates are approximate. Trial data stays in your browser
-    unless you export it.
-  </p>
 
     <!-- Saved records are local to this browser, not a remote account. -->
     <section class="panel" aria-labelledby="historyTitle">
