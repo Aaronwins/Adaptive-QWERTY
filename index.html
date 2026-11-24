@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#6d4bd8">
   <title>Adaptive QWERTY | HCI Prototype</title>
+  <!-- CSS controls appearance; JavaScript handles input, calibration, and results. -->
   <link rel="stylesheet" href="style.css">
+  <!-- Load the correction engine before the main application uses it. -->
   <script src="autocorrect.js" defer></script>
   <script src="script.js" defer></script>
 </head>
@@ -17,6 +19,7 @@
     <p class="subtitle">A keyboard that fits how you type.</p>
   </header>
 
+  <!-- Step 1: collect hand measurements used by the layout-scoring heuristic. -->
   <section class="panel" aria-labelledby="setupTitle">
     <h2 id="setupTitle">Your hand</h2>
     <label class="field-label">Typing hand</label>
@@ -48,6 +51,7 @@
     </button>
   </section>
 
+  <!-- Step 2: this panel is revealed only during the six reach checks. -->
   <section id="calibrationPanel" class="panel hidden"
            aria-labelledby="calibrationTitle">
     <div class="section-heading">
@@ -62,6 +66,7 @@
 
     <div class="calibration-grid"
          aria-label="Six example positions across the keyboard area">
+      <!-- script.js creates and positions the six clickable visual targets. -->
       <div id="calibrationTargets" class="target-layer"></div>
     </div>
 
@@ -81,6 +86,7 @@
     </button>
   </section>
 
+  <!-- Step 3: choose typing conditions and complete a timed phrase session. -->
   <section class="panel" aria-labelledby="testTitle">
     <h2 id="testTitle">Typing test</h2>
     <label class="field-label">Keyboard layout</label>
@@ -108,6 +114,7 @@
 
     <div class="field-row">
       <label for="autocorrectMode">Autocorrection</label>
+      <!-- Off is the unmodified baseline; Hybrid adds optional contextual ML. -->
       <select id="autocorrectMode">
         <option value="off" selected>Off (baseline)</option>
         <option value="spelling">Spelling dictionary</option>
@@ -117,6 +124,7 @@
     <p class="hint">Each session automatically selects random phrases from
       the 200-phrase bank. Hybrid downloads a pretrained model on first use
       and falls back to spelling correction while it loads.</p>
+    <!-- Accessible status text reports dictionary/model loading success or failure. -->
     <p id="autocorrectStatus" class="hint" role="status"></p>
 
     <button type="button" id="startSession" class="primary full">
@@ -126,6 +134,7 @@
       Pick a layout and try a few phrases.
     </p>
 
+    <!-- Hidden until a session starts; updated as the custom keys are pressed. -->
     <div id="trialArea" class="hidden">
       <p class="field-label phrase-label">Type this phrase</p>
       <p id="targetPhrase" class="target-phrase"></p>
@@ -164,6 +173,7 @@
       </div>
     </div>
 
+    <!-- Summary table appears after stopping or finishing a typing session. -->
     <div id="resultsPanel" class="results-panel hidden" aria-live="polite">
       <h3>Session results</h3>
       <p id="resultsSummary"></p>
@@ -183,6 +193,7 @@
     </div>
   </section>
 
+  <!-- Letters are inserted into the three empty rows by createKeyboard(). -->
   <section class="keyboard-dock"
            aria-label="Interactive QWERTY keyboard">
     <div class="dock-heading">
@@ -209,6 +220,7 @@
       Trial data stays in your browser unless you export it.
     </p>
   </section>
+    <!-- Saved records are local to this browser, not a remote account. -->
     <section class="panel" aria-labelledby="historyTitle">
     <div class="section-heading">
       <h2 id="historyTitle">Typing history</h2>
