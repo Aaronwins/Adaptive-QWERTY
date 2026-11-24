@@ -75,19 +75,87 @@ h3 { font-size: 15px; }
 .stats div { border-radius: 9px; padding: 10px 4px; background: #f6f2ff; text-align: center; }
 .stats strong { display: block; font-size: 17px; font-variant-numeric: tabular-nums; color: var(--purple-deep); }
 .stats span { font-size: 10px; color: var(--muted); }
-/* The dock is the static container; the keyboard inside it can shrink/shift. */
-.keyboard-dock { margin-top: 16px; padding: 13px 9px 11px; border: 1px solid #d2c3ed; border-radius: 14px; background: #e9e1f6; }
-.dock-heading { display: flex; justify-content: space-between; margin: 0 4px 10px; font-size: 10px; font-weight: 700; letter-spacing: .06em; color: #675984; }
+/* iOS-inspired keyboard presentation (not Apple's actual system keyboard).
+ * Keyboard width/offset still come from the existing adaptation algorithm.
+ * The visual key geometry is independent of the number of letters in a row.
+ */
+.keyboard-dock {
+  margin-top: 16px;
+  padding: 12px 8px 11px;
+  border: 1px solid #c6cad2;
+  border-radius: 14px;
+  background: #d3d7df;
+}
+.dock-heading {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 4px 11px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: #555d68;
+}
 .keyboard-stage { width: 100%; }
-/* Width and margin-left are controlled by JS for Standard vs Adaptive. */
-.keyboard { width: 100%; margin-left: 0; transition: width .25s ease, margin-left .25s ease; }
-.key-row { display: flex; gap: 3px; justify-content: center; margin-bottom: 5px; }
-/* Touch actions avoid double-tap zoom interference on mobile key presses. */
-.key { flex: 1; min-width: 0; height: 47px; border: 1px solid #d8cee7; border-radius: 6px; background: #fff; color: var(--ink); font-size: clamp(11px,3.5vw,16px); font-weight: 600; padding: 0; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-.key:active { background: #cbbaf5; }
-.special-key { background: #d9ccef; }
-.space-key { flex: 4; font-size: 13px; }
-.backspace-key { flex: 1; font-size: 22px; }
+/* Width and margin-left remain under script.js control. */
+.keyboard {
+  --key-gap: 4px;
+  width: 100%;
+  margin-left: 0;
+  transition: width .25s ease, margin-left .25s ease;
+}
+.key-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--key-gap);
+  margin-bottom: 8px;
+}
+/* Every letter uses exactly 1/10 of a ten-letter QWERTY row
+ * (minus gaps), even on the nine-letter and seven-letter rows.
+ * Shorter rows are centered to reproduce the familiar stagger.
+ */
+.key-row .key:not(.special-key) {
+  flex: 0 0 calc((100% - 9 * var(--key-gap)) / 10);
+  min-width: 0;
+}
+.key {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 46px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: #fff;
+  color: #202127;
+  box-shadow: 0 1px 0 #a4a8b1, 0 2px 0 rgba(80, 85, 98, .12);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: clamp(12px, 3.7vw, 19px);
+  font-weight: 400;
+  line-height: 1;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.key:active {
+  background: #bdc4cf;
+  box-shadow: 0 1px 0 #989fac;
+  transform: translateY(1px);
+}
+/* Space and Backspace intentionally differ from letter-key widths. */
+.special-row { margin-bottom: 0; }
+.special-key { background: #acb4c1; }
+.space-key {
+  flex: 5 1 0;
+  font-size: 14px;
+  font-weight: 400;
+  background: #fff;
+}
+.backspace-key {
+  flex: 1 1 0;
+  font-size: 23px;
+}
 .footer-note { font-size: 10px; color: #736988; margin: 11px 4px 0; line-height: 1.5; }
 select { border: 1px solid #d9ceed; border-radius: 8px; padding: 10px; background: white; color: var(--ink); }
 /* End-of-session summary is hidden until results are available. */
@@ -99,7 +167,13 @@ table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 1
 th, td { padding: 8px 5px; border-bottom: 1px solid #d2e9e2; text-align: right; }
 th:first-child, td:first-child { text-align: left; }
 /* Very narrow screens need smaller padding so keys remain usable. */
-@media (max-width: 350px) { .app { padding-left: 8px; padding-right: 8px; } .panel { padding: 12px; } .key { height: 43px; } .rating-buttons button { padding: 10px 5px; font-size: 12px; } }
+@media (max-width: 350px) {
+  .app { padding-left: 8px; padding-right: 8px; }
+  .panel { padding: 12px; }
+  .keyboard { --key-gap: 3px; }
+  .key { height: 43px; }
+  .rating-buttons button { padding: 10px 5px; font-size: 12px; }
+}
 
 /* Typing history: each stored session receives a row and a Delete action. */
 .history-list {
