@@ -333,7 +333,6 @@ function handleKeyboardKey(key) {
     if (session && !phraseRecorded) finishPhrase();
     return;
   }
-  if (key === "period") key = ".";
   if (key === "space" || key === "backspace") {
     typeCharacter(key);
     return;
@@ -1517,7 +1516,7 @@ function initialize() {
   );
 
   // Static control keys use the same handler as dynamic letter keys.
-  ["space", "period", "return"].forEach(key => {
+  ["space", "return"].forEach(key => {
     document.querySelector('[data-key="' + key + '"]')
       .addEventListener("click", () => handleKeyboardKey(key));
   });
