@@ -215,6 +215,12 @@
     </div>
 
     <div class="keyboard-stage">
+      <!-- Suggestions sit directly above the keys, like an iOS predictive-text bar.
+           Suggestions are derived from the typed word, never the target prompt. -->
+      <div id="suggestionBar" class="suggestion-bar" role="group" aria-label="Autocorrection suggestions">
+        <span id="suggestionHint" class="suggestion-hint" role="status">Start a typing session to see suggestions</span>
+        <div id="suggestionChoices" class="suggestion-choices" aria-live="off"></div>
+      </div>
       <div id="keyboard" class="keyboard" aria-label="Custom mobile keyboard">
         <!-- script.js fills all three rows and the optional symbol layout. -->
         <div class="key-row" data-row="0"></div>
@@ -223,8 +229,6 @@
         <div class="key-row special-row">
           <button type="button" id="numberToggle" class="key special-key number-key"
                   data-key="numbers" aria-label="Switch to numbers and symbols">123</button>
-          <button type="button" class="key special-key language-key"
-                  aria-label="English keyboard only" title="English keyboard only" disabled>◎</button>
           <button type="button" id="spaceKey" class="key space-key"
                   data-key="space" aria-label="Space">space</button>
           <button type="button" class="key punctuation-key"
