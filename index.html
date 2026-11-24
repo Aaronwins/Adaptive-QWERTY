@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="style.css">
   <!-- Load the correction engine before the main application uses it. -->
   <script src="autocorrect.js" defer></script>
+  <script src="phrases-extra.js" defer></script>
   <script src="script.js" defer></script>
   <!-- React powers only the welcome page; the typing lab stays dependency-light. -->
   <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" defer crossorigin="anonymous"></script>
@@ -111,7 +112,7 @@
     </div>
 
     <p id="layoutSummary" class="layout-summary" aria-live="polite">
-      Standard layout — full width.
+      Standard layout, full width.
     </p>
     <p id="layoutDetails" class="layout-details hidden"></p>
 
@@ -134,7 +135,7 @@
       </select>
     </div>
     <p class="hint">Each session automatically selects random phrases from
-      the 200-phrase bank. Hybrid downloads a pretrained model on first use
+      the 900 phrase bank. Hybrid downloads a pretrained model on first use
       and falls back to spelling correction while it loads.</p>
     <!-- Accessible status text reports dictionary/model loading success or failure. -->
     <p id="autocorrectStatus" class="hint" role="status"></p>
@@ -181,7 +182,7 @@
         <div><strong id="timeValue">0.0</strong><span>Seconds</span></div>
         <div><strong id="wpmValue">0.0</strong><span>WPM</span></div>
         <div><strong id="backspaceValue">0</strong><span>Backspaces</span></div>
-        <div><strong id="errorValue">—</strong><span>Final error %</span></div>
+        <div><strong id="errorValue">0.0</strong><span>Final error %</span></div>
       </div>
     </div>
 
