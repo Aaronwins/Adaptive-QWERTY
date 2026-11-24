@@ -27,7 +27,12 @@ The current prototype includes:
 - Six-point thumb-reach calibration using comfortable/difficult responses
 - Adaptive keyboard sizing and horizontal positioning
 - Standard and Adaptive QWERTY modes
-- Transcription sessions with 3, 5, or 10 phrases
+- Transcription sessions with 3, 5, or 10 phrases selected from 200 unique sentences
+- Reproducible randomized phrase sets controlled by a numeric seed
+- Optional autocorrection: Off, Spelling dictionary, or Hybrid contextual ML
+- SymSpell-style correction backed by a large English word-frequency dictionary
+- Pretrained DistilBERT via Transformers.js for optional context-aware candidate reranking (no model training required)
+- Autocorrection and ML activity recorded in CSV exports
 - Live typing time and words-per-minute (WPM) calculations
 - Final error-rate measurement using Levenshtein distance
 - Backspace tracking
@@ -39,7 +44,7 @@ The current prototype includes:
 
 ## How the Adaptation Works
 
-The prototype uses a rule-based scoring algorithm rather than a trained machine-learning model.
+The **keyboard adaptation** uses a rule-based scoring algorithm rather than a trained machine-learning model. The optional **autocorrection** feature is separate and can use a pretrained language model; it does not change the reach-calibration algorithm.
 
 **1. Hand measurements**
 
@@ -77,7 +82,7 @@ The keyboard keeps the standard QWERTY letter arrangement. The adaptation change
 
 Users can complete typing sessions using either the Standard or Adaptive keyboard.
 
-Both modes use the same transcription phrases for a given phrase count, making their results easier to compare.
+The app selects 3, 5, or 10 phrases from a bank of **200 unique sentences** using a reproducible seeded shuffle. Enter the **same phrase-set number** when testing different keyboard layouts or autocorrection settings to obtain the same phrases in the same order. Change the seed to obtain a different sequence. No phrase repeats within an individual session.
 
 The application records:
 
@@ -91,6 +96,10 @@ The application records:
 - Words per minute
 - Final error percentage
 - Number of backspaces
+- Autocorrection setting (Off / Spelling / Hybrid)
+- Number of automatic word substitutions
+- Number of contextual-ML substitutions and model readiness
+- Random phrase-set seed
 
 Completed trials are saved in the browser using localStorage. Results normally remain available after refreshing the page or closing the tab.
 
@@ -98,21 +107,39 @@ Users can export all saved results to a CSV file, delete individual sessions, or
 
 Data is not automatically uploaded to a server or synchronized between devices. Browser storage is not a permanent backup, so exporting results is recommended.
 
-## Planned Evaluation
+## Autocorrection (Experimental)
 
-The project will primarily be evaluated using two HCI methods covered in class.
+The typing test now supports **three modes**, independently of Standard versus Adaptive QWERTY:
 
-**GOMS (Goals, Operators, Methods, and Selection Rules)**
+| Mode | Behavior |
+| --- | --- |
+| **Off (baseline)** | Preserves the original input behavior, with no automatic substitutions. |
+| **Spelling dictionary** | Uses a SymSpell-style symmetric-delete candidate index and a large English word-frequency list to correct likely misspellings when Space is pressed or a phrase is finished. |
+| **Hybrid (spelling + contextual ML)** | Adds a pretrained **DistilBERT** masked-language model, loaded with **Transformers.js**, to consider preceding typed words when reranking spelling candidates. |
 
-GOMS will be used to analyze the interaction steps involved in configuring the keyboard, completing calibration, and performing typing tasks.
+The spelling approach is inspired by SymSpell; it is **not** an import of the original C# library. The contextual model is **pretrained** and runs inference locally in the browser—**no training or fine-tuning is performed**. This does **not** mean that the keyboard adaptation algorithm itself uses machine learning.
 
-**Nielsen's 10 Usability Heuristics**
+The English frequency dictionary is downloaded when spelling correction is first used. In Hybrid mode, the browser also downloads the pretrained model on demand, which may consume significant bandwidth and memory. **Spelling correction remains available while the ML model loads or if it fails to initialize.** A status message indicates model readiness.
 
-The prototype will be reviewed against Nielsen's usability principles, including visibility of system status, consistency, user control, error prevention, and recognition rather than recall.
+Corrections are deliberately conservative. The system does not guarantee that every typo will be corrected, does not provide unrestricted grammar correction, and may occasionally replace a word incorrectly. ML reranking considers **previously typed text**, not the target phrase. Contextual predictions can be skipped if the user continues typing before inference completes.
 
-Informal self-testing and a small pilot evaluation may also be included, if feasible, to identify practical problems with keyboard reach, key size, and typing familiarity.
+The CSV includes `autocorrectMode`, `autocorrections`, `mlCorrections`, `mlModelReady`, and `phraseSeed`. The substitution counts indicate **actions**, not independently verified successful corrections. A Hybrid setting does not imply that the model actually ran during every phrase; inspect the readiness and ML-count fields.
 
-The application already records typing performance, but improvements in speed, accuracy, or comfort have not yet been established experimentally.
+For controlled comparisons, hold the typing hand, phrase count, and random seed constant across Standard/Adaptive and Off/Spelling/Hybrid conditions. Rotate condition order on additional seeds to reduce practice effects. **The earlier 40 baseline trials used fixed phrases and should be analyzed separately from new randomized trials.**
+
+More details and manual checks: [AUTOCORRECT.md](AUTOCORRECT.md).
+
+## Evaluation
+
+The project uses three complementary HCI evaluation methods:
+
+- **GOMS (Goals, Operators, Methods, and Selection Rules)** to compare interaction steps and setup effort.
+- **Nielsen's 10 Usability Heuristics** to inspect feedback, consistency, error prevention, user control, and other interface properties.
+- **Exploratory typing tests** to compare words per minute, final error rate, and backspace usage.
+
+An initial single-participant evaluation collected **40 completed phrase trials** across Standard and Adaptive layouts with dominant and non-dominant hands. Standard averaged **16.92 WPM** compared with **14.89 WPM** for Adaptive. Adaptive had fewer backspaces per phrase (**2.20** versus **3.10**); both recorded **0% final error after corrections**. These descriptive results do not establish general superiority or measured comfort benefits.
+
+The additional autocorrection conditions and the 200-phrase randomized bank make new comparisons possible; they are **features for further evaluation, not evidence that ML improves typing**.
 
 ## Related Work
 
@@ -135,12 +162,17 @@ https://graphics.cs.uh.edu/wp-content/papers/2022/2022-AVI-keyboardComparisonStu
 - The custom keyboard is a browser-based prototype, not a replacement for a phone's system keyboard.
 - Familiarity with standard QWERTY may affect typing performance.
 - Browser storage can be cleared or removed, so CSV export is important for preserving research results.
+- Autocorrection may introduce incorrect substitutions; the ML model may be unavailable or slow on some mobile browsers.
+- The contextual model is not a full sentence-level grammar correction system.
+- The seeded phrase bank reduces repetition within a session, but repeated seeds and repeated testing can still produce learning effects.
 
 ## Technology Stack
 
 - HTML
 - CSS
 - JavaScript
+- SymSpell-style spelling-correction index and English frequency dictionary
+- Transformers.js and pretrained DistilBERT for optional contextual reranking
 - Browser localStorage
 - GitHub for version control
 - Vercel for deployment
@@ -152,6 +184,8 @@ Adaptive-QWERTY/
 ├── index.html
 ├── style.css
 ├── script.js
+├── autocorrect.js
+├── AUTOCORRECT.md
 └── README.md
 ```
 
@@ -165,7 +199,7 @@ git clone https://github.com/Aaronwins/Adaptive-QWERTY.git
 
 Open the project folder and launch `index.html` in a browser.
 
-No additional dependencies or build process are required.
+No build process is required. However, the first spelling-enabled run needs network access to download the English frequency dictionary, and Hybrid mode additionally downloads Transformers.js and a pretrained DistilBERT model. For reliable local testing, use a local HTTP server instead of opening the file directly (for example, run `python -m http.server 8000` in the project directory and visit `http://localhost:8000`).
 
 ## Deployment
 
