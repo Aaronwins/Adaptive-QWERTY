@@ -1,3 +1,8 @@
+/* Adaptive QWERTY interface styles.
+ * The keyboard keeps the familiar QWERTY order; script.js changes its
+ * overall width and margin-left after calibration, not individual keys.
+ */
+/* Shared theme variables keep the app colors consistent. */
 :root {
   color-scheme: light;
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -16,16 +21,20 @@ body { margin: 0; color: var(--ink); background: #faf7ff; }
 button, input, select { font: inherit; }
 button { cursor: pointer; }
 button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #ae98f2; outline-offset: 2px; }
+/* JavaScript adds/removes this class as setup, trial, and result panels change. */
 .hidden { display: none !important; }
+/* Cap content width so the UI behaves like a phone even on desktop. */
 .app { width: min(100%, 490px); margin: auto; padding: 24px 14px 30px; }
 .header { margin-bottom: 22px; }
 .eyebrow { margin: 0 0 7px; color: var(--teal); font-size: 11px; letter-spacing: .09em; font-weight: 750; }
 h1 { margin: 0 0 6px; font-size: 31px; line-height: 1.15; letter-spacing: -.035em; color: var(--purple-deep); }
 .subtitle { margin: 0; font-size: 14px; color: var(--muted); }
+/* Panels group inputs into separate stages of the experiment. */
 .panel { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 17px; margin-bottom: 14px; }
 h2 { font-size: 17px; letter-spacing: -.015em; margin: 0 0 15px; }
 h3 { font-size: 15px; }
 .field-label { display: block; margin: 0 0 9px; font-size: 13px; font-weight: 650; }
+/* Button groups toggle typing hand or keyboard layout. */
 .segmented { display: flex; gap: 8px; margin-bottom: 14px; }
 .segmented button { flex: 1; min-width: 0; border: 1px solid #d9ceed; border-radius: 10px; padding: 11px 8px; background: #fcfaff; color: var(--ink); font-weight: 600; }
 .segmented button.active { border-color: var(--purple); background: var(--purple); color: #fff; }
@@ -40,6 +49,7 @@ h3 { font-size: 15px; }
 .full { width: 100%; }
 .section-heading { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .pill { padding: 5px 10px; border-radius: 20px; background: var(--lavender); color: var(--purple-deep); font-size: 12px; font-weight: 700; }
+/* Six reach targets are absolutely positioned within this reference rectangle. */
 .calibration-grid { position: relative; height: 238px; margin-top: 17px; border: 1px solid #cbbded; border-radius: 12px; background: linear-gradient(160deg,#f4edff,#eafaf7); }
 .target-layer { position: absolute; inset: 0; }
 .reach-target { position: absolute; width: 19px; height: 19px; border-radius: 50%; background: #d1c8e8; border: 2px solid white; transform: translate(-50%,-50%); box-shadow: 0 0 0 1px #aa9dcb; }
@@ -55,19 +65,24 @@ h3 { font-size: 15px; }
 .layout-summary { margin: 5px 0 12px; color: var(--muted); font-size: 13px; }
 .layout-details { padding: 10px 11px; margin-bottom: 13px; border-radius: 9px; background: var(--lavender); color: #55419a; font-size: 12px; line-height: 1.5; }
 .phrase-label { margin-top: 20px; }
+/* Target (prompt) and typed text deliberately have different backgrounds. */
 .target-phrase { margin: 0 0 12px; padding: 13px; border-radius: 10px; background: #eaf8f5; border-left: 4px solid var(--teal); font-size: 14px; line-height: 1.5; }
 .typed-box { min-height: 75px; padding: 12px; border: 1px solid #d9ceed; border-radius: 10px; background: white; font-size: 15px; line-height: 1.4; overflow-wrap: anywhere; white-space: pre-wrap; }
 .actions { display: flex; gap: 9px; margin-top: 12px; }
 .actions button { flex: 1; }
+/* Live trial metrics: elapsed seconds, WPM, manual backspaces, final error. */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 17px; }
 .stats div { border-radius: 9px; padding: 10px 4px; background: #f6f2ff; text-align: center; }
 .stats strong { display: block; font-size: 17px; font-variant-numeric: tabular-nums; color: var(--purple-deep); }
 .stats span { font-size: 10px; color: var(--muted); }
+/* The dock is the static container; the keyboard inside it can shrink/shift. */
 .keyboard-dock { margin-top: 16px; padding: 13px 9px 11px; border: 1px solid #d2c3ed; border-radius: 14px; background: #e9e1f6; }
 .dock-heading { display: flex; justify-content: space-between; margin: 0 4px 10px; font-size: 10px; font-weight: 700; letter-spacing: .06em; color: #675984; }
 .keyboard-stage { width: 100%; }
+/* Width and margin-left are controlled by JS for Standard vs Adaptive. */
 .keyboard { width: 100%; margin-left: 0; transition: width .25s ease, margin-left .25s ease; }
 .key-row { display: flex; gap: 3px; justify-content: center; margin-bottom: 5px; }
+/* Touch actions avoid double-tap zoom interference on mobile key presses. */
 .key { flex: 1; min-width: 0; height: 47px; border: 1px solid #d8cee7; border-radius: 6px; background: #fff; color: var(--ink); font-size: clamp(11px,3.5vw,16px); font-weight: 600; padding: 0; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 .key:active { background: #cbbaf5; }
 .special-key { background: #d9ccef; }
@@ -75,6 +90,7 @@ h3 { font-size: 15px; }
 .backspace-key { flex: 1; font-size: 22px; }
 .footer-note { font-size: 10px; color: #736988; margin: 11px 4px 0; line-height: 1.5; }
 select { border: 1px solid #d9ceed; border-radius: 8px; padding: 10px; background: white; color: var(--ink); }
+/* End-of-session summary is hidden until results are available. */
 .results-panel { margin-top: 18px; padding: 13px; border: 1px solid #b7ded8; background: #f1fcf8; border-radius: 12px; }
 .results-panel h3 { margin: 0 0 8px; }
 .results-panel p { font-size: 13px; line-height: 1.5; }
@@ -82,9 +98,10 @@ select { border: 1px solid #d9ceed; border-radius: 8px; padding: 10px; backgroun
 table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 12px; }
 th, td { padding: 8px 5px; border-bottom: 1px solid #d2e9e2; text-align: right; }
 th:first-child, td:first-child { text-align: left; }
+/* Very narrow screens need smaller padding so keys remain usable. */
 @media (max-width: 350px) { .app { padding-left: 8px; padding-right: 8px; } .panel { padding: 12px; } .key { height: 43px; } .rating-buttons button { padding: 10px 5px; font-size: 12px; } }
 
-/* Typing history */
+/* Typing history: each stored session receives a row and a Delete action. */
 .history-list {
   display: grid;
   gap: 8px;
