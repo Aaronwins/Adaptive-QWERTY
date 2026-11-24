@@ -912,3 +912,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
     animation: none;
   }
 }
+
+/* When typing starts, replace the Text Message placeholder with the caret
+ * at the first character position instead of placing it after the label. */
+.keyboard-stage .message-composer.typing-active .typed-box:empty::before {
+  content: none;
+}
+.keyboard-stage .message-composer.typing-active .typed-box:empty::after {
+  margin-left: 0;
+}
