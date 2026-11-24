@@ -100,7 +100,7 @@
       ),
       h("main", { className: "welcome-main" },
         h("section", { className: "welcome-introduction" },
-          h("span", { className: "welcome-kicker" }, "ONE-HANDED TYPING / HCI PROJECT"),
+          h("span", { className: "welcome-kicker" }, "TYPING RESEARCH / HCI PROJECT"),
           h("h1", null, "The keyboard you know,", h("span", null, " adjusted for you.")),
           h("p", { className: "welcome-description" },
             "Test a familiar QWERTY layout that adapts to your thumb reach. Compare layouts, typing speed, accuracy, and autocorrection in a simple mobile experiment."
@@ -111,7 +111,7 @@
           ),
           h("div", { className: "welcome-facts" },
             h("div", null, h("strong", null, "06"), h("span", null, "Reach checks")),
-            h("div", null, h("strong", null, "200"), h("span", null, "Practice phrases")),
+            h("div", null, h("strong", null, "undefined"), h("span", null, "Practice phrases")),
             h("div", null, h("strong", null, "03"), h("span", null, "Correction modes"))
           )
         ),
