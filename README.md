@@ -20,7 +20,7 @@ Can personalized QWERTY layouts that incorporate thumb length, thumb width, and 
 
 The current prototype includes:
 
-- A custom on-screen QWERTY keyboard with space and backspace controls
+- A custom iOS-inspired on-screen QWERTY keyboard with uniformly sized letter keys, staggered rows, space and backspace controls
 - Left-hand and right-hand selection
 - Thumb length measurement in centimeters
 - Thumb-pad width measurement in millimeters
@@ -76,7 +76,7 @@ A wider thumb pad increases the minimum allowed keyboard width. This prevents th
 
 This constraint is a design heuristic. It has not been experimentally validated as an ideal relationship between thumb width and key size.
 
-The keyboard keeps the standard QWERTY letter arrangement. The adaptation changes its overall width and horizontal position rather than rearranging individual letters.
+The keyboard keeps the standard QWERTY letter arrangement. The adaptation changes its overall width and horizontal position rather than rearranging individual letters. All letter keys share one width within a layout: the nine-letter and seven-letter rows are centered rather than stretching their keys. The design is iOS-inspired but is not the native Apple keyboard.
 
 ## Typing Tests and Data Collection
 
