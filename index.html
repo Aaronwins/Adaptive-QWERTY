@@ -152,9 +152,13 @@
       <p class="field-label phrase-label">Type this phrase</p>
       <p id="targetPhrase" class="target-phrase"></p>
 
-      <div id="typedText" class="typed-box"
-           aria-label="Text typed using the custom keyboard"
-           aria-live="polite"></div>
+      <!-- A message-style read-only display driven by the experimental keyboard.
+           This is not a second native input method. -->
+      <div class="message-composer" aria-label="Typing message">
+        <div id="typedText" class="typed-box"
+             aria-label="Text typed using the custom keyboard"
+             aria-live="polite"></div>
+      </div>
 
       <div class="actions">
         <button type="button" id="resetPhrase" class="secondary">
@@ -244,7 +248,10 @@
         </div>
       </div>
     </div>
-
+    <!-- Non-interactive home-gesture clearance, below the full-width keyboard. -->
+    <div class="keyboard-home-area" aria-hidden="true">
+      <div class="keyboard-home-indicator"></div>
+    </div>
   </section>
 
     <!-- Saved records are local to this browser, not a remote account. -->
