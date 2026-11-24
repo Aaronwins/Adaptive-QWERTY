@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#6d4bd8">
   <title>Adaptive QWERTY | HCI Prototype</title>
   <link rel="stylesheet" href="style.css">
+  <script src="autocorrect.js" defer></script>
   <script src="script.js" defer></script>
 </head>
 <body>
@@ -104,6 +105,23 @@
         <option value="10">10 phrases</option>
       </select>
     </div>
+
+    <div class="field-row">
+      <label for="autocorrectMode">Autocorrection</label>
+      <select id="autocorrectMode">
+        <option value="off" selected>Off (baseline)</option>
+        <option value="spelling">Spelling dictionary</option>
+        <option value="hybrid">Hybrid (spelling + contextual ML)</option>
+      </select>
+    </div>
+    <div class="field-row">
+      <label for="phraseSeed">Random phrase set</label>
+      <input id="phraseSeed" type="number" min="1" step="1" value="1">
+    </div>
+    <p class="hint">Use the same phrase set number when comparing layouts.
+      Hybrid downloads a pretrained model on first use and falls back to
+      spelling correction while it loads.</p>
+    <p id="autocorrectStatus" class="hint" role="status"></p>
 
     <button type="button" id="startSession" class="primary full">
       Start typing session
