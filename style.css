@@ -536,3 +536,66 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .lab-navigation-title { font-size: 16px; }
   .header h1 { font-size: 34px; }
 }
+
+/* Larger hero label takes the place of the old HCI project kicker. */
+.welcome-kicker {
+  font-size: clamp(25px, 3.7vw, 38px);
+  font-weight: 650;
+  letter-spacing: -.035em;
+  line-height: 1.15;
+  color: #176ba9;
+  margin-bottom: 24px;
+}
+@media (max-width: 760px) {
+  .welcome-kicker { font-size: clamp(27px, 7.4vw, 35px); }
+}
+/* iOS inspired text suggestions appear between the dock heading and the keys.
+ * They use real dictionary suggestions, with no access to the target phrase. */
+.suggestion-bar {
+  min-height: 43px;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  margin: 0 0 9px;
+  background: #c5cbd5;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.suggestion-hint {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  color: #526170;
+  font-size: 12px;
+  padding: 4px 8px;
+  text-align: center;
+}
+.suggestion-choices { display: flex; flex: 1; min-width: 0; }
+.suggestion-choice {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 5px 6px;
+  border: 0;
+  border-right: 1px solid #b1b9c5;
+  background: transparent;
+  color: #233644;
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.suggestion-choice:last-child { border-right: 0; }
+.suggestion-choice:hover, .suggestion-choice:focus-visible { background: #e7eef4; }
+.suggestion-choice.primary-suggestion { color: #176caa; font-weight: 650; }
+/* Use a large stretchable Space key instead of a decorative globe control. */
+.keyboard .special-row { display: grid; grid-template-columns: 42px minmax(0, 1fr) 25px 51px; }
+.keyboard .special-row .number-key,
+.keyboard .special-row .space-key,
+.keyboard .special-row .punctuation-key,
+.keyboard .special-row .return-key { width: 100%; min-width: 0; }
+@media (max-width: 350px) {
+  .keyboard .special-row { grid-template-columns: 35px minmax(0, 1fr) 23px 43px; }
+  .suggestion-choice { font-size: 12px; padding: 5px 3px; }
+}
