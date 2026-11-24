@@ -86,7 +86,7 @@ A wider thumb pad increases the minimum allowed keyboard width. This prevents th
 
 This constraint is a design heuristic. It has not been experimentally validated as an ideal relationship between thumb width and key size.
 
-The keyboard keeps the standard QWERTY letter arrangement. The adaptation changes its overall width and horizontal position rather than rearranging individual letters. All letter keys share one width within a layout: the nine-letter and seven-letter rows are centered rather than stretching their keys. The design is iOS-inspired but is not the native Apple keyboard.
+On mobile screens, the Standard keyboard now spans almost the full viewport width (6px of outer margin on each side), with taller touch keys comparable to iOS. The Adaptive mode still resizes and shifts within that same baseline width. These are approximations because native iOS key geometry varies by model, orientation, and system settings. The keyboard keeps the standard QWERTY letter arrangement. The adaptation changes its overall width and horizontal position rather than rearranging individual letters. All letter keys share one width within a layout: the nine-letter and seven-letter rows are centered rather than stretching their keys. The design is iOS-inspired but is not the native Apple keyboard.
 
 ## Typing Tests and Data Collection
 
