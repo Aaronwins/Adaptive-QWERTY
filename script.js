@@ -602,7 +602,7 @@ function updateKeyboardLayout() {
     keyboard.style.marginLeft = "0";
 
     $("layoutSummary").textContent =
-      "Standard layout — full width.";
+      "Standard layout, full width.";
 
     $("layoutDetails").classList.add("hidden");
     $("keyboardModeLabel").textContent = "STANDARD";
@@ -698,7 +698,7 @@ function resetPhrase() {
   mlCorrections = 0;
   phraseRecorded = false;
 
-  $("errorValue").textContent = "—";
+  $("errorValue").textContent = "0.0";
   $("nextPhrase").classList.add("hidden");
   $("finishPhrase").disabled = false;
   $("resetPhrase").disabled = false;
